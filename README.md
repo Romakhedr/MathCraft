@@ -1,5 +1,5 @@
 # MathCraft 🧮
-
+![MathCraft Logo](logo.png)
 MathCraft is a premium, interactive mathematics education platform designed to make math accessible and intuitive. We bridge the gap between abstract concepts and real-world understanding through a clean, 'Quiet Luxury' interface.
 
 ## 🚀 Key Features
