@@ -12,16 +12,21 @@ module.exports = async function handler(req, res) {
   }
 
   try {
-    const { messages } = req.body || {};
+    const body = req.body || {};
+    const messages = body.messages || body.prompt || [];
     const apiKey = process.env.GEMINI_API_KEY;
 
     if (!apiKey) {
       return res.status(500).json({ error: 'API key not configured' });
     }
 
-    const lastMessage = messages?.[messages.length - 1]?.content || 
-                        messages?.[messages.length - 1]?.text || 
-                        "مرحباً";
+    let lastMessage = "مرحباً";
+    if (Array.isArray(messages) && messages.length > 0) {
+      const last = messages[messages.length - 1];
+      lastMessage = last?.content || last?.text || last?.message || "مرحباً";
+    } else if (typeof body.message === 'string') {
+      lastMessage = body.message;
+    }
 
     const apiRes = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`, {
       method: 'POST',
@@ -40,10 +45,14 @@ module.exports = async function handler(req, res) {
 
     const replyText = data.candidates?.[0]?.content?.parts?.[0]?.text || "أهلاً بك، كيف يمكنني مساعدتك في الرياضيات اليوم؟";
 
+    // إرسال جميع المفاتيح المحتملة للرد لضمان التوافق التام مع الواجهة
     return res.status(200).json({ 
       text: replyText, 
       response: replyText, 
-      message: replyText 
+      message: replyText,
+      answer: replyText,
+      reply: replyText,
+      content: replyText
     });
   } catch (error) {
     console.error("Server Error:", error);
