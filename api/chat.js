@@ -7,16 +7,24 @@ export default async function handler(req, res) {
 
   try {
     const { messages } = req.body;
-    
     const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
-    const lastMessage = messages[messages.length - 1]?.content || "مرحباً";
+    
+    const lastMessage = messages?.[messages.length - 1]?.content || 
+                        messages?.[messages.length - 1]?.text || 
+                        "مرحباً";
 
     const response = await ai.models.generateContent({
-      model: 'gemini-2.5-flash',
+      model: 'gemini-1.5-flash',
       contents: lastMessage,
     });
 
-    return res.status(200).json({ text: response.text });
+    const replyText = response.text || "أهلاً بك، كيف يمكنني مساعدتك في الرياضيات اليوم؟";
+
+    return res.status(200).json({ 
+      text: replyText, 
+      response: replyText, 
+      message: replyText 
+    });
   } catch (error) {
     console.error("Gemini Error:", error);
     return res.status(500).json({ error: "Failed to fetch AI response" });
