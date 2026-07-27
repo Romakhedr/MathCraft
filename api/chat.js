@@ -1,4 +1,4 @@
-// api/chat.js — MathCraft Final Production Version (v1 endpoint)
+// api/chat.js — MathCraft Final Stable Version (gemini-pro)
 export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
@@ -26,8 +26,8 @@ export default async function handler(req, res) {
       lastMessage = last?.content || last?.text || last?.message || "مرحباً";
     }
 
-    // الانتقال إلى الإصدار v1 المستقر لضمان توافقه التام مع المفتاح
-    const apiRes = await fetch(`https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key=${apiKey}`, {
+    // استخدام نموذج gemini-pro الثابت والمدعم كلياً على الإصدار v1
+    const apiRes = await fetch(`https://generativelanguage.googleapis.com/v1/models/gemini-pro:generateContent?key=${apiKey}`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -53,4 +53,4 @@ export default async function handler(req, res) {
   } catch (error) {
     return res.status(200).json({ reply: `خطأ في الخادم: ${error.message}` });
   }
-}
+  }
