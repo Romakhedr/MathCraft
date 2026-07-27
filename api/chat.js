@@ -1,4 +1,4 @@
-// api/chat.js — MathCraft Final Production Endpoint
+// api/chat.js — MathCraft Final Fixed Endpoint
 export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
@@ -26,8 +26,8 @@ export default async function handler(req, res) {
       lastMessage = last?.content || last?.text || last?.message || "مرحباً";
     }
 
-    // الرابط القياسي والمستقر لنموذج gemini-1.5-flash لمنع خطأ 404 نهائياً
-    const apiRes = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`, {
+    // استخدام gemini-1.5-flash-latest لضمان توافقه التام مع المفتاح
+    const apiRes = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${apiKey}`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -38,10 +38,6 @@ export default async function handler(req, res) {
     const data = await apiRes.json();
 
     if (!apiRes.ok) {
-      // معالجة ذكية لخطأ التكرار السريع 429 لتوضيحه بدلاً من تعطل الدردشة
-      if (apiRes.status === 429) {
-        return res.status(200).json({ reply: "تنبيه: تم إرسال طلبات متتالية سريعة جداً. يرجى الانتظار 30 ثانية والمحاولة بهدوء." });
-      }
       const errorMsg = data.error?.message || `Google API Error (${apiRes.status})`;
       return res.status(200).json({ reply: `رد جوجل: ${errorMsg}` });
     }
