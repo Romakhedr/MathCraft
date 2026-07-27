@@ -1,4 +1,4 @@
-// api/chat.js — MathCraft Final Stable Version (gemini-pro)
+// api/chat.js — Dynamic Model Discovery & Production Endpoint
 export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
@@ -26,8 +26,30 @@ export default async function handler(req, res) {
       lastMessage = last?.content || last?.text || last?.message || "مرحباً";
     }
 
-    // استخدام نموذج gemini-pro الثابت والمدعم كلياً على الإصدار v1
-    const apiRes = await fetch(`https://generativelanguage.googleapis.com/v1/models/gemini-pro:generateContent?key=${apiKey}`, {
+    // 1. استدعاء قائمة النماذج المتاحة فعلياً لهذا المفتاح تلقائياً
+    const modelsRes = await fetch(`https://generativelanguage.googleapis.com/v1/models?key=${apiKey}`);
+    const modelsData = await modelsRes.json();
+
+    if (!modelsRes.ok) {
+      return res.status(200).json({ reply: `خطأ في التحقق من النماذج: ${modelsData.error?.message || modelsRes.status}` });
+    }
+
+    const models = modelsData.models || [];
+    // البحث عن أول نموذج يدعم توليد المحتوى generateContent
+    const validModel = models.find(m => 
+      m.supportedGenerationMethods && 
+      m.supportedGenerationMethods.includes('generateContent')
+    );
+
+    if (!validModel) {
+      return res.status(200).json({ reply: "لم يتم العثور على أي نموذج يدعم التوليد بهذا المفتاح." });
+    }
+
+    // استخراج اسم النموذج الصحيح تلقائياً
+    const modelName = validModel.name.replace('models/', '');
+
+    // 2. إرسال طلب الدردشة باستخدام النموذج المكتشف بدقة
+    const apiRes = await fetch(`https://generativelanguage.googleapis.com/v1/models/${modelName}:generateContent?key=${apiKey}`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
