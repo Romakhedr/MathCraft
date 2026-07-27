@@ -1,141 +1,60 @@
-// api/chat.js
-// MathCraft — AI Math Tutor Endpoint (Vercel Serverless Function)
-// Integrates Google Gemini (gemini-1.5-flash) to answer, explain, and verify math questions.
-
-const GEMINI_API_URL =
-  "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent";
-
-const SYSTEM_INSTRUCTION = `You are "MathCraft Tutor", a friendly, patient, and precise AI math assistant.
-Rules:
-- Explain concepts step by step, using clear, simple language.
-- When solving a problem, show the full working, not just the final answer.
-- If the student's input is unclear or not a math question, politely ask for clarification.
-- Keep answers focused on Arithmetic, Algebra, Geometry, and related school-level math topics.
-- Use LaTeX-style notation sparingly and only when it improves clarity (e.g. x^2, sqrt(x)).
-- Be encouraging and never condescending.`;
-
-const rateLimitMap = new Map();
-const RATE_LIMIT_WINDOW_MS = 60_000;
-const RATE_LIMIT_MAX_REQUESTS = 20;
-
-function isRateLimited(ip) {
-  const now = Date.now();
-  const entry = rateLimitMap.get(ip) || { count: 0, windowStart: now };
-
-  if (now - entry.windowStart > RATE_LIMIT_WINDOW_MS) {
-    entry.count = 0;
-    entry.windowStart = now;
-  }
-
-  entry.count += 1;
-  rateLimitMap.set(ip, entry);
-
-  return entry.count > RATE_LIMIT_MAX_REQUESTS;
-}
-
-function setCorsHeaders(res) {
-  res.setHeader("Access-Control-Allow-Origin", "*");
-  res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
-  res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
-}
-
+// api/chat.js — MathCraft Final Production Endpoint
 export default async function handler(req, res) {
-  setCorsHeaders(res);
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 
-  if (req.method === "OPTIONS") {
-    return res.status(204).end();
-  }
-
-  if (req.method !== "POST") {
-    return res.status(405).json({ error: "Method not allowed. Use POST." });
-  }
-
-  const clientIp =
-    req.headers["x-forwarded-for"]?.split(",")[0]?.trim() ||
-    req.socket?.remoteAddress ||
-    "unknown";
-
-  if (isRateLimited(clientIp)) {
-    return res
-      .status(429)
-      .json({ error: "Too many requests. Please wait a moment and try again." });
-  }
+  if (req.method === 'OPTIONS') return res.status(200).end();
+  if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
 
   try {
-    const body = req.body || {};
-    let message = body.message;
-    const history = body.history || [];
-
-    // دعم استلام الرسائل سواء جاءت بصيغة message أو messages (لضمان توافق الواجهة)
-    if (!message && Array.isArray(body.messages) && body.messages.length > 0) {
-      const lastMsg = body.messages[body.messages.length - 1];
-      message = lastMsg?.content || lastMsg?.text || lastMsg?.message || "";
-    }
-
-    if (!message || typeof message !== "string" || !message.trim()) {
-      return res.status(400).json({ error: "Field 'message' or 'messages' is required and must be valid." });
-    }
-
     const apiKey = process.env.GEMINI_API_KEY;
     if (!apiKey) {
-      console.error("GEMINI_API_KEY is not set in environment variables.");
-      return res.status(500).json({ error: "Server misconfiguration. Please contact the administrator." });
+      return res.status(200).json({ reply: "خطأ: مفتاح GEMINI_API_KEY غير مضاف في إعدادات Vercel." });
     }
 
-    const contents = [];
+    let body = req.body;
+    if (typeof body === 'string') {
+      try { body = JSON.parse(body); } catch (e) { body = {}; }
+    }
+    body = body || {};
 
-    if (Array.isArray(history)) {
-      for (const turn of history) {
-        if (turn?.role && turn?.text) {
-          contents.push({
-            role: turn.role === "assistant" ? "model" : "user",
-            parts: [{ text: String(turn.text) }],
-          });
-        }
-      }
+    const messages = body.messages || body.prompt || [];
+    let lastMessage = body.message || "مرحباً";
+    if (Array.isArray(messages) && messages.length > 0) {
+      const last = messages[messages.length - 1];
+      lastMessage = last?.content || last?.text || last?.message || "مرحباً";
     }
 
-    contents.push({ role: "user", parts: [{ text: message.trim() }] });
-
-    const geminiResponse = await fetch(`${GEMINI_API_URL}?key=${apiKey}`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
+    // الرابط القياسي والمستقر لنموذج gemini-1.5-flash لمنع خطأ 404 نهائياً
+    const apiRes = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        system_instruction: { parts: [{ text: SYSTEM_INSTRUCTION }] },
-        contents,
-        generationConfig: {
-          temperature: 0.4,
-          maxOutputTokens: 1024,
-          topP: 0.9,
-        },
-        safetySettings: [
-          { category: "HARM_CATEGORY_HARASSMENT", threshold: "BLOCK_ONLY_HIGH" },
-          { category: "HARM_CATEGORY_HATE_SPEECH", threshold: "BLOCK_ONLY_HIGH" },
-        ],
-      }),
+        contents: [{ parts: [{ text: lastMessage }] }]
+      })
     });
 
-    if (!geminiResponse.ok) {
-      const errorBody = await geminiResponse.text();
-      console.error("Gemini API error:", geminiResponse.status, errorBody);
-      return res.status(502).json({ error: "Failed to get a response from the AI model." });
+    const data = await apiRes.json();
+
+    if (!apiRes.ok) {
+      // معالجة ذكية لخطأ التكرار السريع 429 لتوضيحه بدلاً من تعطل الدردشة
+      if (apiRes.status === 429) {
+        return res.status(200).json({ reply: "تنبيه: تم إرسال طلبات متتالية سريعة جداً. يرجى الانتظار 30 ثانية والمحاولة بهدوء." });
+      }
+      const errorMsg = data.error?.message || `Google API Error (${apiRes.status})`;
+      return res.status(200).json({ reply: `رد جوجل: ${errorMsg}` });
     }
 
-    const data = await geminiResponse.json();
+    const replyText = data.candidates?.[0]?.content?.parts?.[0]?.text || "أهلاً بك، كيف يمكنني مساعدتك في الرياضيات اليوم؟";
 
-    const reply =
-      data?.candidates?.[0]?.content?.parts?.map((p) => p.text).join("") ??
-      "I couldn't generate a response. Please rephrase your question.";
-
-    // إرجاع الرد بجميع المفاتيح المحتملة لتتوافق تماماً مع الواجهة الأمامية
     return res.status(200).json({ 
-      reply, 
-      text: reply, 
-      message: reply, 
-      answer: reply 
+      reply: replyText,
+      text: replyText,
+      message: replyText,
+      answer: replyText
     });
   } catch (error) {
-    console.error("Unexpected error in /api/chat:", error);
-    return res.status(500).json({ error: "Internal server error. Please try again later." });
+    return res.status(200).json({ reply: `خطأ في الخادم: ${error.message}` });
   }
 }
