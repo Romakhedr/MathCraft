@@ -1,4 +1,4 @@
-// api/chat.js — MathCraft Official Production Endpoint
+// api/chat.js — Ultimate Self-Healing Endpoint
 export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
@@ -26,25 +26,43 @@ export default async function handler(req, res) {
       lastMessage = last?.content || last?.text || last?.message || "مرحباً";
     }
 
-    // الاعتماد على v1beta مع نموذج gemini-1.5-flash بالشكل الرسمي الدقيق
-    const apiRes = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        contents: [
-          {
-            role: "user",
-            parts: [{ text: lastMessage }]
-          }
-        ]
-      })
-    });
+    // محاولة الاتصال بالنماذج بالترتيب الأضمن لتفادي أي قيود على المفتاح
+    const modelsToTry = [
+      { name: "gemini-1.5-flash", version: "v1beta" },
+      { name: "gemini-pro", version: "v1" },
+      { name: "gemini-1.5-pro", version: "v1" }
+    ];
 
-    const data = await apiRes.json();
+    let data = null;
+    let success = false;
 
-    if (!apiRes.ok) {
-      const errorMsg = data.error?.message || `Google API Error (${apiRes.status})`;
-      return res.status(200).json({ reply: `رد جوجل: ${errorMsg}` });
+    for (const m of modelsToTry) {
+      try {
+        const apiRes = await fetch(`https://generativelanguage.googleapis.com/${m.version}/models/${m.name}:generateContent?key=${apiKey}`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            contents: [
+              {
+                role: "user",
+                parts: [{ text: lastMessage }]
+              }
+            ]
+          })
+        });
+        const resJson = await apiRes.json();
+        if (apiRes.ok && resJson.candidates) {
+          data = resJson;
+          success = true;
+          break;
+        }
+      } catch (err) {
+        continue;
+      }
+    }
+
+    if (!success || !data) {
+      return res.status(200).json({ reply: "عذراً، يرجى التحقق من صحة مفتاح GEMINI_API_KEY المضاف في إعدادات Vercel." });
     }
 
     const replyText = data.candidates?.[0]?.content?.parts?.[0]?.text || "أهلاً بك، كيف يمكنني مساعدتك في الرياضيات اليوم؟";
@@ -58,4 +76,4 @@ export default async function handler(req, res) {
   } catch (error) {
     return res.status(200).json({ reply: `خطأ في الخادم: ${error.message}` });
   }
-            }
+  }
