@@ -1,1 +1,583 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MathCraft — Where Numbers Become Your Language</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#0B2A1C;
+    --card-dark:#153B27;
+    --gold:#F2B632;
+    --gold-soft:#F8D27C;
+    --paper:#F6F5EF;
+    --paper-card:#FFFFFF;
+    --muted:#B8CFC0;
+    --muted-dark:#5B6E63;
+    --line:#22503A;
+    --danger:#D9784A;
+    --success:#3F8F5F;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html{scroll-behavior:smooth;}
+  body{font-family:'Inter', sans-serif; background:var(--paper); color:var(--ink); line-height:1.5; overflow-x:hidden;}
+  a{color:inherit; text-decoration:none;}
+  button{font-family:inherit; cursor:pointer; border:none;}
+  .container{max-width:1100px; margin:0 auto; padding:0 24px;}
 
+  header{position:sticky; top:0; z-index:50; background:rgba(11,42,28,0.92); backdrop-filter:blur(10px); border-bottom:1px solid rgba(255,255,255,0.06);}
+  .navwrap{display:flex; align-items:center; justify-content:space-between; padding:18px 24px; max-width:1100px; margin:0 auto;}
+  .logo{font-size:22px; font-weight:800; color:#fff; letter-spacing:-0.5px;}
+  .logo span{color:var(--gold);}
+  nav.links{display:flex; gap:28px; font-size:15px; color:var(--muted);}
+  nav.links a:hover{color:#fff;}
+  .btn-gold{background:var(--gold); color:var(--ink); font-weight:700; font-size:15px; padding:11px 22px; border-radius:10px; display:inline-flex; align-items:center; gap:8px; transition:transform .15s ease, box-shadow .15s ease;}
+  .btn-gold:hover{transform:translateY(-2px); box-shadow:0 8px 20px rgba(242,182,50,0.35);}
+  .btn-outline{border:1.5px solid rgba(255,255,255,0.35); color:#fff; font-weight:600; font-size:15px; padding:10px 22px; border-radius:10px; background:transparent; transition:background .15s ease, border-color .15s ease;}
+  .btn-outline:hover{background:rgba(255,255,255,0.08); border-color:#fff;}
+
+  .hero{background:radial-gradient(circle at 85% -10%, #1c4e33 0%, var(--ink) 55%), var(--ink); color:#fff; padding:90px 24px 70px; position:relative; overflow:hidden;}
+  .hero::before{content:"∑"; position:absolute; font-family:'Playfair Display',serif; font-size:340px; color:rgba(255,255,255,0.03); top:-90px; left:-40px; line-height:1;}
+  .hero::after{content:"π"; position:absolute; font-family:'Playfair Display',serif; font-size:220px; color:rgba(242,182,50,0.05); bottom:-60px; right:-20px; line-height:1;}
+  .hero-inner{max-width:780px; margin:0 auto; text-align:center; position:relative; z-index:2;}
+  .eyebrow{color:var(--gold-soft); font-size:13px; font-weight:700; letter-spacing:3px; margin-bottom:22px;}
+  .hero h1{font-family:'Playfair Display', serif; font-weight:700; font-size:clamp(38px, 7vw, 62px); line-height:1.25; margin-bottom:22px;}
+  .hero h1 em{color:var(--gold); font-style:italic;}
+  .hero p.lead{color:var(--muted); font-size:18px; max-width:520px; margin:0 auto 34px; line-height:1.7;}
+  .hero-ctas{display:flex; gap:14px; justify-content:center; flex-wrap:wrap; margin-bottom:56px;}
+  .hero-stats{display:flex; justify-content:center; gap:56px; flex-wrap:wrap;}
+  .hstat b{display:block; font-size:30px; color:#fff; font-weight:800;}
+  .hstat span{font-size:13px; color:var(--muted);}
+
+  section{padding:80px 24px;}
+  .section-tag{color:var(--success); font-size:13px; font-weight:700; letter-spacing:2.5px; margin-bottom:10px; display:block;}
+  .section-title{font-size:clamp(26px,4vw,36px); font-weight:800; margin-bottom:16px; color:var(--ink);}
+  .section-sub{color:var(--muted-dark); font-size:16px; max-width:600px; margin-bottom:44px;}
+  .light{background:var(--paper);}
+  .dark{background:var(--ink); color:#fff;}
+
+  .grid3{display:grid; grid-template-columns:repeat(3,1fr); gap:20px;}
+  .pcard{background:var(--paper-card); border:1px solid #E6E3D8; border-radius:16px; padding:26px;}
+  .pcard .ico{width:42px; height:42px; border-radius:10px; background:#FCEFE3; color:var(--danger); display:flex; align-items:center; justify-content:center; font-size:20px; margin-bottom:16px;}
+  .pcard h3{font-size:17px; font-weight:700; margin-bottom:8px;}
+  .pcard p{font-size:14px; color:var(--muted-dark); line-height:1.7;}
+
+  .solver-wrap{display:grid; grid-template-columns:1fr 1fr; gap:48px; align-items:center;}
+  .solver-copy p{color:var(--muted); font-size:16px; line-height:1.8; margin-top:14px;}
+  .solver-card{background:var(--card-dark); border-radius:18px; padding:28px; border:1px solid var(--line);}
+  .eq-display{font-family:'IBM Plex Mono', monospace; font-size:26px; text-align:center; color:#fff; margin-bottom:20px; background:rgba(0,0,0,0.2); padding:14px; border-radius:10px;}
+  .step{display:flex; gap:12px; align-items:flex-start; padding:10px 0; border-bottom:1px solid rgba(255,255,255,0.06); font-size:14px; color:var(--muted); opacity:0; transform:translateY(6px); transition:opacity .4s ease, transform .4s ease;}
+  .step.show{opacity:1; transform:translateY(0);}
+  .step .num{width:22px; height:22px; border-radius:50%; background:var(--gold); color:var(--ink); font-weight:800; font-size:12px; display:flex; align-items:center; justify-content:center; flex-shrink:0; margin-top:1px;}
+  .step b{color:#fff;}
+  .eq-answer{margin-top:16px; text-align:center; background:linear-gradient(90deg,var(--success),#2e7048); color:#fff; font-weight:800; font-size:18px; padding:12px; border-radius:10px; opacity:0; transition:opacity .4s ease;}
+  .eq-answer.show{opacity:1;}
+  .solve-btn{width:100%; background:var(--gold); color:var(--ink); font-weight:700; padding:12px; border-radius:10px; font-size:15px;}
+
+  .feat-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:20px;}
+  .fcard{background:var(--card-dark); border-radius:16px; padding:26px; border:1px solid var(--line);}
+  .fcard .ico{width:42px; height:42px; border-radius:10px; background:rgba(242,182,50,0.15); color:var(--gold); display:flex; align-items:center; justify-content:center; font-size:20px; margin-bottom:16px;}
+  .fcard h3{font-size:17px; font-weight:700; margin-bottom:8px; color:#fff;}
+  .fcard p{font-size:14px; color:var(--muted); line-height:1.7;}
+
+  .topics-grid{display:grid; grid-template-columns:repeat(4,1fr); gap:14px;}
+  .topic-chip{background:var(--paper-card); border:1px solid #E6E3D8; border-radius:14px; padding:18px; display:flex; flex-direction:column; gap:6px; cursor:pointer; transition:border-color .15s ease, transform .15s ease;}
+  .topic-chip:hover{border-color:var(--success); transform:translateY(-3px);}
+  .topic-chip .t-ico{font-size:22px;}
+  .topic-chip h4{font-size:14.5px; font-weight:700;}
+  .topic-chip span{font-size:12px; color:var(--muted-dark);}
+  .topic-detail{display:none; margin-top:26px; background:var(--paper-card); border:1px solid #E6E3D8; border-radius:16px; padding:24px;}
+  .topic-detail.show{display:block;}
+  .topic-detail h3{font-size:18px; margin-bottom:8px;}
+  .topic-detail p{color:var(--muted-dark); font-size:14.5px; line-height:1.8;}
+  .topic-detail .close{float:right; font-size:13px; color:var(--success); font-weight:700; cursor:pointer;}
+
+  .impact-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:20px;}
+  .istat{background:var(--paper-card); border:1px solid #E6E3D8; border-radius:16px; padding:30px 20px; text-align:center;}
+  .istat b{font-size:34px; font-weight:800; color:var(--ink); display:block; margin-bottom:6px;}
+  .istat span{font-size:13px; color:var(--muted-dark);}
+
+  .quiz-card{background:var(--card-dark); border-radius:20px; padding:34px; border:1px solid var(--line); max-width:640px; margin:0 auto;}
+  .quiz-top{display:flex; justify-content:space-between; align-items:center; margin-bottom:22px;}
+  .quiz-top span{font-size:13px; color:var(--muted);}
+  .progress-bar{height:6px; background:rgba(255,255,255,0.1); border-radius:4px; overflow:hidden; margin-bottom:26px;}
+  .progress-fill{height:100%; background:var(--gold); width:0%; transition:width .3s ease;}
+  .q-text{font-size:19px; font-weight:700; color:#fff; margin-bottom:22px; min-height:56px;}
+  .q-options{display:flex; flex-direction:column; gap:10px; margin-bottom:22px;}
+  .q-opt{background:rgba(255,255,255,0.05); border:1px solid var(--line); color:#fff; text-align:left; padding:14px 16px; border-radius:12px; font-size:15px; transition:background .15s ease, border-color .15s ease;}
+  .q-opt:hover{background:rgba(255,255,255,0.09);}
+  .q-opt.correct{background:rgba(63,143,95,0.25); border-color:var(--success);}
+  .q-opt.wrong{background:rgba(217,120,74,0.25); border-color:var(--danger);}
+  .q-opt:disabled{cursor:default;}
+  .quiz-footer{display:flex; justify-content:space-between; align-items:center;}
+  .quiz-next{background:var(--gold); color:var(--ink); font-weight:700; padding:11px 24px; border-radius:10px; font-size:14px; opacity:0.4; pointer-events:none;}
+  .quiz-next.active{opacity:1; pointer-events:auto;}
+  .quiz-result{display:none; text-align:center;}
+  .quiz-result.show{display:block;}
+  .quiz-result .score{font-size:48px; font-weight:800; color:var(--gold); margin-bottom:10px;}
+  .quiz-result p{color:var(--muted); margin-bottom:22px;}
+  .quiz-restart{background:var(--gold); color:var(--ink); font-weight:700; padding:12px 26px; border-radius:10px; font-size:15px;}
+
+  .cta{text-align:center; background:var(--ink); color:#fff; padding:90px 24px; position:relative; overflow:hidden;}
+  .cta .badge{width:70px; height:70px; border-radius:50%; background:rgba(242,182,50,0.15); color:var(--gold); display:flex; align-items:center; justify-content:center; font-size:30px; margin:0 auto 24px;}
+  .cta h2{font-family:'Playfair Display',serif; font-size:clamp(24px,4vw,32px); line-height:1.5; margin-bottom:6px;}
+  .cta h2 b{color:var(--gold);}
+  .cta p{color:var(--muted); margin-top:18px; font-size:14px;}
+
+  footer{background:var(--ink); border-top:1px solid var(--line); text-align:center; padding:24px; color:var(--muted); font-size:13px;}
+
+  /* ---------- AI ASSISTANT WIDGET ---------- */
+  .ai-fab{
+    position:fixed; bottom:24px; right:24px; z-index:200;
+    width:60px; height:60px; border-radius:50%; background:var(--gold); color:var(--ink);
+    display:flex; align-items:center; justify-content:center; font-size:26px;
+    box-shadow:0 10px 26px rgba(0,0,0,0.28); transition:transform .2s ease;
+  }
+  .ai-fab:hover{transform:scale(1.06);}
+  .ai-fab .dot{
+    position:absolute; top:2px; right:2px; width:12px; height:12px; border-radius:50%;
+    background:var(--success); border:2px solid var(--ink);
+  }
+  .ai-panel{
+    position:fixed; bottom:96px; right:24px; z-index:200; width:360px; max-width:calc(100vw - 32px);
+    height:520px; max-height:calc(100vh - 140px); background:var(--card-dark); border:1px solid var(--line);
+    border-radius:18px; display:none; flex-direction:column; overflow:hidden;
+    box-shadow:0 20px 50px rgba(0,0,0,0.4);
+  }
+  .ai-panel.open{display:flex;}
+  .ai-head{
+    background:var(--ink); padding:16px 18px; display:flex; align-items:center; gap:10px; border-bottom:1px solid var(--line);
+  }
+  .ai-head .ai-avatar{
+    width:34px; height:34px; border-radius:9px; background:rgba(242,182,50,0.18); color:var(--gold);
+    display:flex; align-items:center; justify-content:center; font-size:16px;
+  }
+  .ai-head b{color:#fff; font-size:14.5px; display:block;}
+  .ai-head span{color:var(--muted); font-size:11.5px;}
+  .ai-close{margin-left:auto; color:var(--muted); font-size:18px; cursor:pointer; background:none;}
+  .ai-body{flex:1; overflow-y:auto; padding:16px; display:flex; flex-direction:column; gap:12px;}
+  .ai-msg{max-width:85%; padding:10px 14px; border-radius:14px; font-size:13.5px; line-height:1.7;}
+  .ai-msg.bot{background:rgba(255,255,255,0.06); color:#EDEFEA; align-self:flex-start; border-bottom-left-radius:4px;}
+  .ai-msg.user{background:var(--gold); color:var(--ink); align-self:flex-end; border-bottom-right-radius:4px; font-weight:600;}
+  .ai-msg.typing{display:flex; gap:4px; align-items:center; background:rgba(255,255,255,0.06); align-self:flex-start;}
+  .ai-msg.typing span{width:6px; height:6px; border-radius:50%; background:var(--muted); animation:blink 1.2s infinite ease-in-out;}
+  .ai-msg.typing span:nth-child(2){animation-delay:.2s;}
+  .ai-msg.typing span:nth-child(3){animation-delay:.4s;}
+  @keyframes blink{0%,80%,100%{opacity:.25;} 40%{opacity:1;}}
+  .ai-quick{display:flex; gap:8px; flex-wrap:wrap; padding:0 16px 12px;}
+  .ai-quick button{
+    background:rgba(255,255,255,0.06); border:1px solid var(--line); color:var(--muted);
+    font-size:12px; padding:6px 12px; border-radius:20px;
+  }
+  .ai-quick button:hover{color:#fff; border-color:var(--gold);}
+  .ai-input-row{display:flex; gap:8px; padding:14px 16px; border-top:1px solid var(--line); background:var(--ink);}
+  .ai-input-row input{
+    flex:1; background:rgba(255,255,255,0.06); border:1px solid var(--line); color:#fff;
+    padding:11px 14px; border-radius:10px; font-size:13.5px; font-family:inherit;
+  }
+  .ai-input-row input::placeholder{color:var(--muted);}
+  .ai-send{
+    width:42px; height:42px; border-radius:10px; background:var(--gold); color:var(--ink);
+    display:flex; align-items:center; justify-content:center; font-size:16px; flex-shrink:0;
+  }
+  .ai-send:disabled{opacity:.5;}
+  @media(max-width:500px){
+    .ai-panel{right:16px; left:16px; width:auto; bottom:88px;}
+    .ai-fab{right:16px;}
+  }
+
+  @media(max-width:860px){
+    nav.links{display:none;}
+    .grid3, .feat-grid, .impact-grid{grid-template-columns:1fr;}
+    .topics-grid{grid-template-columns:repeat(2,1fr);}
+    .solver-wrap{grid-template-columns:1fr;}
+    .hero-stats{gap:36px;}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="navwrap">
+    <div class="logo">Math<span>Craft</span></div>
+    <nav class="links">
+      <a href="#problem">Problem</a>
+      <a href="#solution">Solution</a>
+      <a href="#features">Features</a>
+      <a href="#topics">Topics</a>
+      <a href="#quiz">Quiz</a>
+    </nav>
+    <a href="#quiz" class="btn-gold">Start Free →</a>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="hero-inner">
+    <span class="eyebrow">— MATHEMATICS EDUCATION —</span>
+    <h1>Where numbers become <em>your</em><br>language</h1>
+    <p class="lead">Master mathematics through visual explanations, instant practice, and step-by-step guidance.</p>
+    <div class="hero-ctas">
+      <button class="btn-gold" id="btnExplore">Explore Topics →</button>
+      <button class="btn-outline" id="btnQuiz">Try a Quiz</button>
+    </div>
+    <div class="hero-stats">
+      <div class="hstat"><b>12+</b><span>Math Topics</span></div>
+      <div class="hstat"><b>500+</b><span>Practice Problems</span></div>
+      <div class="hstat"><b>100%</b><span>Free to Use</span></div>
+    </div>
+  </div>
+</section>
+
+<section class="light" id="problem">
+  <div class="container">
+    <span class="section-tag">THE PROBLEM</span>
+    <h2 class="section-title">Why Traditional Math Learning Falls Short</h2>
+    <p class="section-sub">Traditional methods leave students memorizing instead of understanding.</p>
+    <div class="grid3">
+      <div class="pcard"><div class="ico">△</div><h3>Abstract Concepts</h3><p>Students struggle to grasp abstract mathematical ideas without concrete, visual context.</p></div>
+      <div class="pcard"><div class="ico">△</div><h3>Wasted Hours</h3><p>Hours spent on exercises without truly understanding the underlying steps.</p></div>
+      <div class="pcard"><div class="ico">△</div><h3>One-Size-Fits-All</h3><p>Traditional methods rarely accommodate diverse learning styles, causing frustration.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="dark" id="solution">
+  <div class="container">
+    <span class="section-tag" style="color:var(--gold-soft)">THE SOLUTION</span>
+    <h2 class="section-title" style="color:#fff">Meet MathCraft</h2>
+    <div class="solver-wrap">
+      <div class="solver-copy">
+        <p>Every problem becomes an interactive experience. Enter your equation and watch the solution unfold step by step, with visual representations that make abstract concepts tangible and clear.</p>
+      </div>
+      <div class="solver-card">
+        <div class="eq-display" id="eqDisplay">2x + 5 = 17</div>
+        <button class="solve-btn" id="solveBtn">Solve step by step</button>
+        <div id="stepsWrap" style="margin-top:18px;">
+          <div class="step" id="s1"><div class="num">1</div><div>Subtract 5 from both sides → <b>2x = 12</b></div></div>
+          <div class="step" id="s2"><div class="num">2</div><div>Divide both sides by 2 → <b>x = 6</b></div></div>
+          <div class="step" id="s3"><div class="num">3</div><div>Verify: 2(6) + 5 = 17 ✓</div></div>
+        </div>
+        <div class="eq-answer" id="eqAnswer">x = 6</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="dark" id="features">
+  <div class="container">
+    <span class="section-tag" style="color:var(--gold-soft)">KEY FEATURES</span>
+    <h2 class="section-title" style="color:#fff">Three Core Pillars</h2>
+    <div class="feat-grid">
+      <div class="fcard"><div class="ico">✦</div><h3>AI-Powered Assistant</h3><p>Explains mistakes in real time, guiding students to the correct approach instantly.</p></div>
+      <div class="fcard"><div class="ico">▤</div><h3>Progress Dashboard</h3><p>Tracks each student's performance with precision, highlighting strengths and gaps.</p></div>
+      <div class="fcard"><div class="ico">◈</div><h3>Adaptive Exercises</h3><p>Automatically adjusts difficulty to match each student's individual level.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="light" id="topics">
+  <div class="container">
+    <span class="section-tag">EXPLORE</span>
+    <h2 class="section-title">Pick Your Topic</h2>
+    <p class="section-sub">Tap any topic to see a quick overview.</p>
+    <div class="topics-grid" id="topicsGrid"></div>
+    <div class="topic-detail" id="topicDetail">
+      <span class="close" id="closeDetail">✕ Close</span>
+      <h3 id="detailTitle"></h3>
+      <p id="detailBody"></p>
+    </div>
+  </div>
+</section>
+
+<section class="light">
+  <div class="container">
+    <span class="section-tag">IMPACT</span>
+    <h2 class="section-title">Early Results Speak for Themselves</h2>
+    <p class="section-sub">In our early trials, we observed a significant improvement in students' understanding and confidence when tackling mathematical problems.</p>
+    <div class="impact-grid">
+      <div class="istat"><b>+38%</b><span>Problem-Solving Accuracy</span></div>
+      <div class="istat"><b>+45%</b><span>Student Confidence</span></div>
+      <div class="istat"><b>2.4x</b><span>Faster Concept Mastery</span></div>
+    </div>
+  </div>
+</section>
+
+<section class="dark" id="quiz">
+  <div class="container">
+    <span class="section-tag" style="color:var(--gold-soft); text-align:center; display:block;">TRY IT YOURSELF</span>
+    <h2 class="section-title" style="color:#fff; text-align:center;">Quick Quiz</h2>
+    <p class="section-sub" style="margin:0 auto 44px; text-align:center;">Five questions to test your fundamentals.</p>
+
+    <div class="quiz-card">
+      <div id="quizActive">
+        <div class="quiz-top">
+          <span id="quizProgressLabel">Question 1 of 5</span>
+          <span id="quizScoreLabel">Score: 0</span>
+        </div>
+        <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+        <div class="q-text" id="qText"></div>
+        <div class="q-options" id="qOptions"></div>
+        <div class="quiz-footer">
+          <span></span>
+          <button class="quiz-next" id="nextBtn">Next Question →</button>
+        </div>
+      </div>
+      <div class="quiz-result" id="quizResult">
+        <div class="score" id="finalScore"></div>
+        <p id="resultMsg"></p>
+        <button class="quiz-restart" id="restartBtn">Try Again</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="cta">
+  <div class="badge">🎓</div>
+  <h2>MathCraft isn't just a tool —<br><b>it's a learning companion.</b></h2>
+  <p>Thank you.</p>
+</section>
+
+<button class="ai-fab" id="aiFab">💬<span class="dot"></span></button>
+<div class="ai-panel" id="aiPanel">
+  <div class="ai-head">
+    <div class="ai-avatar">✦</div>
+    <div>
+      <b>MathCraft Assistant</b>
+      <span>Answers any math question</span>
+    </div>
+    <button class="ai-close" id="aiClose">✕</button>
+  </div>
+  <div class="ai-body" id="aiBody">
+    <div class="ai-msg bot">Hi! I'm the MathCraft AI assistant 👋 Ask me any math question — algebra, geometry, statistics, or anything else — and I'll explain it step by step.</div>
+  </div>
+  <div class="ai-quick" id="aiQuick">
+    <button data-q="Explain the Pythagorean theorem">Pythagorean theorem</button>
+    <button data-q="How do I solve a quadratic equation?">Quadratic equations</button>
+    <button data-q="What's the difference between mean and median?">Mean vs median</button>
+  </div>
+  <div class="ai-input-row">
+    <input type="text" id="aiInput" placeholder="Type your math question...">
+    <button class="ai-send" id="aiSend">➤</button>
+  </div>
+</div>
+
+<footer>© 2026 MathCraft. All rights reserved.</footer>
+
+<script>
+document.getElementById('btnExplore').addEventListener('click', ()=>{
+  document.getElementById('topics').scrollIntoView({behavior:'smooth'});
+});
+document.getElementById('btnQuiz').addEventListener('click', ()=>{
+  document.getElementById('quiz').scrollIntoView({behavior:'smooth'});
+});
+
+const solveBtn = document.getElementById('solveBtn');
+solveBtn.addEventListener('click', ()=>{
+  solveBtn.disabled = true;
+  ['s1','s2','s3'].forEach((id,i)=>{
+    setTimeout(()=>{ document.getElementById(id).classList.add('show'); }, (i+1)*450);
+  });
+  setTimeout(()=>{
+    document.getElementById('eqAnswer').classList.add('show');
+    solveBtn.textContent = 'Solved ✓';
+  }, 1650);
+});
+
+const topics = [
+  {ico:'🔢', name:'Basic Algebra', desc:'Variables, linear equations, and solving for the unknown step by step.'},
+  {ico:'📐', name:'Geometry', desc:'Shapes, areas, perimeters, and the relationships between angles.'},
+  {ico:'📊', name:'Statistics', desc:'Averages, probability, and reading data with confidence.'},
+  {ico:'∫', name:'Calculus', desc:'A visual introduction to limits, derivatives, and integrals.'},
+  {ico:'△', name:'Trigonometry', desc:'Sine, cosine, and tangent, and their practical applications.'},
+  {ico:'🧮', name:'Mental Math', desc:'Fast strategies for everyday arithmetic operations.'},
+  {ico:'📈', name:'Functions', desc:'Understanding the relationship between inputs and outputs through graphs.'},
+  {ico:'🔺', name:'Matrices', desc:'The basics of linear algebra and representing data in rows and columns.'},
+  {ico:'⚖️', name:'Inequalities', desc:'Comparing values and solving problems involving greater-than and less-than.'},
+  {ico:'🎲', name:'Probability', desc:'Measuring the chances of events happening in an intuitive, visual way.'},
+  {ico:'🔷', name:'Solid Geometry', desc:'Volumes and 3D shapes and their calculations.'},
+  {ico:'✳️', name:'Numbers & Ratios', desc:'Fractions, percentages, and proportion in everyday life.'},
+];
+const grid = document.getElementById('topicsGrid');
+topics.forEach(t=>{
+  const el = document.createElement('div');
+  el.className = 'topic-chip';
+  el.innerHTML = `<div class="t-ico">${t.ico}</div><h4>${t.name}</h4><span>View overview</span>`;
+  el.addEventListener('click', ()=>{
+    document.getElementById('detailTitle').textContent = t.name;
+    document.getElementById('detailBody').textContent = t.desc;
+    document.getElementById('topicDetail').classList.add('show');
+    document.getElementById('topicDetail').scrollIntoView({behavior:'smooth', block:'center'});
+  });
+  grid.appendChild(el);
+});
+document.getElementById('closeDetail').addEventListener('click', ()=>{
+  document.getElementById('topicDetail').classList.remove('show');
+});
+
+const questions = [
+  {q:'What is 7 × 8?', options:['54','56','64','48'], correct:1},
+  {q:'Solve for x: x + 9 = 15', options:['x = 5','x = 6','x = 7','x = 24'], correct:1},
+  {q:'What is the sum of the angles in a triangle?', options:['90°','180°','270°','360°'], correct:1},
+  {q:'What is 15% of 200?', options:['15','20','30','40'], correct:2},
+  {q:'What is the square root of 81?', options:['8','9','7','10'], correct:1},
+];
+let qIndex = 0, score = 0, answered = false;
+
+function renderQuestion(){
+  answered = false;
+  const q = questions[qIndex];
+  document.getElementById('qText').textContent = q.q;
+  document.getElementById('quizProgressLabel').textContent = `Question ${qIndex+1} of ${questions.length}`;
+  document.getElementById('quizScoreLabel').textContent = `Score: ${score}`;
+  document.getElementById('progressFill').style.width = `${(qIndex/questions.length)*100}%`;
+  const opWrap = document.getElementById('qOptions');
+  opWrap.innerHTML = '';
+  q.options.forEach((opt, i)=>{
+    const b = document.createElement('button');
+    b.className = 'q-opt';
+    b.textContent = opt;
+    b.addEventListener('click', ()=> selectAnswer(i, b));
+    opWrap.appendChild(b);
+  });
+  document.getElementById('nextBtn').classList.remove('active');
+  document.getElementById('nextBtn').textContent = qIndex === questions.length-1 ? 'See Results →' : 'Next Question →';
+}
+
+function selectAnswer(i, btn){
+  if(answered) return;
+  answered = true;
+  const q = questions[qIndex];
+  const allBtns = document.querySelectorAll('.q-opt');
+  allBtns.forEach(b=>b.disabled = true);
+  if(i === q.correct){
+    btn.classList.add('correct');
+    score++;
+  } else {
+    btn.classList.add('wrong');
+    allBtns[q.correct].classList.add('correct');
+  }
+  document.getElementById('quizScoreLabel').textContent = `Score: ${score}`;
+  document.getElementById('nextBtn').classList.add('active');
+}
+
+document.getElementById('nextBtn').addEventListener('click', ()=>{
+  if(!answered) return;
+  qIndex++;
+  if(qIndex < questions.length){
+    renderQuestion();
+  } else {
+    document.getElementById('progressFill').style.width = '100%';
+    document.getElementById('quizActive').style.display = 'none';
+    document.getElementById('quizResult').classList.add('show');
+    document.getElementById('finalScore').textContent = `${score} / ${questions.length}`;
+    const pct = score/questions.length;
+    document.getElementById('resultMsg').textContent =
+      pct === 1 ? 'Perfect score! Excellent work 🎉' :
+      pct >= 0.6 ? 'Great job, keep practicing!' :
+      'Not bad — try again to improve your score.';
+  }
+});
+
+document.getElementById('restartBtn').addEventListener('click', ()=>{
+  qIndex = 0; score = 0;
+  document.getElementById('quizResult').classList.remove('show');
+  document.getElementById('quizActive').style.display = 'block';
+  renderQuestion();
+});
+
+renderQuestion();
+
+/* ---------- AI Assistant (connected to Claude) ---------- */
+const aiFab = document.getElementById('aiFab');
+const aiPanel = document.getElementById('aiPanel');
+const aiClose = document.getElementById('aiClose');
+const aiBody = document.getElementById('aiBody');
+const aiInput = document.getElementById('aiInput');
+const aiSend = document.getElementById('aiSend');
+const aiQuick = document.getElementById('aiQuick');
+
+let aiHistory = [];
+let aiBusy = false;
+
+aiFab.addEventListener('click', ()=>{
+  aiPanel.classList.toggle('open');
+  if(aiPanel.classList.contains('open')) aiInput.focus();
+});
+aiClose.addEventListener('click', ()=> aiPanel.classList.remove('open'));
+
+aiQuick.addEventListener('click', (e)=>{
+  const btn = e.target.closest('button[data-q]');
+  if(!btn) return;
+  sendToAI(btn.getAttribute('data-q'));
+});
+
+function addMsg(role, text){
+  const div = document.createElement('div');
+  div.className = `ai-msg ${role === 'user' ? 'user' : 'bot'}`;
+  div.textContent = text;
+  aiBody.appendChild(div);
+  aiBody.scrollTop = aiBody.scrollHeight;
+  return div;
+}
+
+function addTyping(){
+  const div = document.createElement('div');
+  div.className = 'ai-msg typing';
+  div.id = 'typingIndicator';
+  div.innerHTML = '<span></span><span></span><span></span>';
+  aiBody.appendChild(div);
+  aiBody.scrollTop = aiBody.scrollHeight;
+}
+function removeTyping(){
+  const t = document.getElementById('typingIndicator');
+  if(t) t.remove();
+}
+
+async function sendToAI(text){
+  if(!text || aiBusy) return;
+  aiBusy = true;
+  aiSend.disabled = true;
+  aiInput.value = '';
+  addMsg('user', text);
+  aiHistory.push({role:'user', content:text});
+  addTyping();
+
+  // Uses your project's own /api/chat.js endpoint (Vercel serverless function)
+  const AI_PROXY_URL = "/api/chat";
+
+  try{
+    const response = await fetch(AI_PROXY_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ messages: aiHistory })
+    });
+    const data = await response.json();
+    removeTyping();
+
+    if(!response.ok){
+      addMsg('bot', 'Something went wrong reaching the assistant. Please try again in a moment.');
+    } else {
+      // Supports both { reply: "..." } (your api/chat.js) and { content: [{type:'text', text:'...'}] }
+      const replyText = data.reply
+        || (data.content || []).map(block => block.type === 'text' ? block.text : '').filter(Boolean).join('\n');
+      addMsg('bot', replyText || "I couldn't generate a reply — try rephrasing your question.");
+      aiHistory.push({role:'assistant', content: replyText});
+    }
+  } catch(err){
+    removeTyping();
+    addMsg('bot', 'Could not reach the AI assistant right now. Check your connection and try again.');
+  }
+
+  aiBusy = false;
+  aiSend.disabled = false;
+}
+
+aiSend.addEventListener('click', ()=> sendToAI(aiInput.value.trim()));
+aiInput.addEventListener('keydown', (e)=>{
+  if(e.key === 'Enter') sendToAI(aiInput.value.trim());
+});
+</script>
+</body>
+</html>
