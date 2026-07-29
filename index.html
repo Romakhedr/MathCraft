@@ -424,43 +424,41 @@ const questions = [
   {q:'What is the square root of 81?', options:['8','9','7','10'], correct:1},
 ];
 let qIndex = 0, score = 0, answered = false;
-
 function renderQuestion(){
-  answered = false;
-  const q = questions[qIndex];
-  document.getElementById('qText').textContent = q.q;
-  document.getElementById('quizProgressLabel').textContent = `Question ${qIndex+1} of ${questions.length}`;
-  document.getElementById('quizScoreLabel').textContent = `Score: ${score}`;
-  document.getElementById('progressFill').style.width = `${(qIndex/questions.length)*100}%`;
-  const opWrap = document.getElementById('qOptions');
-  opWrap.innerHTML = '';
-  q.options.forEach((opt, i)=>{
-    const b = document.createElement('button');
-    b.className = 'q-opt';
-    b.textContent = opt;
-    b.addEventListener('click', ()=> selectAnswer(i, b));
-    opWrap.appendChild(b);
-  });
-  document.getElementById('nextBtn').classList.remove('active');
-  document.getElementById('nextBtn').textContent = qIndex === questions.length-1 ? 'See Results →' : 'Next Question →';
+    answered = false;
+    const q = questions[qIndex];
+    document.getElementById('qText').textContent = q.text;
+    document.getElementById('quizProgressLabel').textContent = `Question ${qIndex + 1} of ${questions.length}`;
+    document.getElementById('quizScoreLabel').textContent = `Score: ${score}`;
+    document.getElementById('progressFill').style.width = `${((qIndex + 1) / questions.length) * 100}%`;
+    const opWrap = document.getElementById('qOptions');
+    opWrap.innerHTML = '';
+    q.options.forEach((opt, i)=>{
+        const b = document.createElement('button');
+        b.className = 'q-opt';
+        b.textContent = opt;
+        b.addEventListener('click', ()=> selectAnswer(i, b));
+        opWrap.appendChild(b);
+    });
+    document.getElementById('nextBtn').style.display = 'none';
 }
 
 function selectAnswer(i, btn){
-  if(answered) return;
-  answered = true;
-  const q = questions[qIndex];
-  const allBtns = document.querySelectorAll('.q-opt');
-  allBtns.forEach(b=>b.disabled = true);
-  if(i === q.correct){
-    btn.classList.add('correct');
-    score++;
-  } else {
-    btn.classList.add('wrong');
-    allBtns[q.correct].classList.add('correct');
+    if(answered) return;
+    answered = true;
+    const q = questions[qIndex];
+    const allBtns = document.querySelectorAll('.q-opt');
+    allBtns.forEach(b=>b.disabled = true);
+    if(i === q.correct){
+        btn.classList.add('correct');
+        score++;
+    } else {
+        btn.classList.add('wrong');
+        if(allBtns[q.correct]) allBtns[q.correct].classList.add('correct');
+    }
+    document.getElementById('quizScoreLabel').textContent = `Score: ${score}`;
+    document.getElementById('nextBtn').style.display = 'block';
   }
-  document.getElementById('quizScoreLabel').textContent = `Score: ${score}`;
-  document.getElementById('nextBtn').classList.add('active');
-}
 
 document.getElementById('nextBtn').addEventListener('click', ()=>{
   if(!answered) return;
