@@ -1,77 +1,50 @@
+// api/chat.js - MathCraft & IBM Bob Integration
 export default async function handler(req, res) {
-  // 1. فرض استقبال طلبات POST حصراً وحماية المسار
   if (req.method !== 'POST') {
-    res.setHeader('Allow', ['POST']);
-    return res.status(405).json({ error: `Method ${req.method} Not Allowed` });
+    return res.status(405).json({ error: 'Method Not Allowed' });
   }
+
+  const { prompt } = req.body;
 
   try {
-    // 2. تحليل البيانات الواردة بأمان تام بغض النظر عن صيغتها (JSON أو String)
-    let body = req.body;
-    if (typeof body === 'string') {
-      try {
-        body = JSON.parse(body);
-      } catch (e) {
-        body = { message: body };
-      }
-    }
+    const apiKey = process.env.IBM_BOB_APIKEY;
+    const projectId = process.env.IBM_BOB_PROJECT_ID;
+    const baseUrl = process.env.WATSONX_URL || 'https://us-south.ml.cloud.ibm.com';
 
-    const message = body?.message?.trim();
-    if (!message) {
-      return res.status(400).json({ error: 'Message content is required.' });
-    }
+    // 1. طلب Access Token من IBM IAM
+    const tokenResponse = await fetch('https://iam.cloud.ibm.com/identity/token', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: `grant_type=urn:ibm:params:oauth:grant-type:apikey&apikey=${apiKey}`
+    });
+    
+    const tokenData = await tokenResponse.json();
+    const accessToken = tokenData.access_token;
 
-    // 3. التحقق الهندسي من وجود مفتاح البيئة السري
-    const apiKey = process.env.GEMINI_API_KEY;
-    if (!apiKey) {
-      console.error('CRITICAL: GEMINI_API_KEY is missing from Vercel environment variables.');
-      return res.status(500).json({ error: 'Server configuration error: API key missing.' });
-    }
-
-    // 4. تنفيذ الاتصال الآمن والمباشر بخوادم Google Gemini مع إعدادات التوليد
-    const apiResponse = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`,
-      {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
+    // 2. إرسال المسألة إلى IBM Bob
+    const ibmResponse = await fetch(`${baseUrl}/ml/v1/text/generation?version=2023-05-29`, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${accessToken}`,
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      },
+      body: JSON.stringify({
+        input: `أنت معلم رياضيات ذكي في تطبيق MathCraft. احسب واشرح الخطوات بوضوح للمسألة التالية:\n${prompt}`,
+        parameters: {
+          max_new_tokens: 500,
+          temperature: 0.7
         },
-        body: JSON.stringify({
-          contents: [
-            {
-              role: 'user',
-              parts: [{ text: message }]
-            }
-          ],
-          generationConfig: {
-            temperature: 0.7,
-            maxOutputTokens: 1500,
-          }
-        })
-      }
-    );
+        model_id: "ibm/granite-13b-chat-v2",
+        project_id: projectId
+      })
+    });
 
-    const data = await apiResponse.json();
+    const result = await ibmResponse.json();
+    const aiMessage = result.results?.[0]?.generated_text || "عذراً، حدث خطأ في معالجة المسألة عبر IBM Bob.";
 
-    // 5. فحص أخطاء مستوى الاستجابة من جوجل
-    if (!apiResponse.ok || data.error) {
-      const errorMessage = data.error?.message || `Gemini API failed with status ${apiResponse.status}`;
-      console.error('Gemini API Error:', errorMessage);
-      return res.status(500).json({ error: errorMessage });
-    }
-
-    // 6. استخراج النص بدقة وحماية بنية البيانات من أي بيانات فارغة
-    const reply = data.candidates?.[0]?.content?.parts?.[0]?.text;
-    if (!reply) {
-      console.error('Malformed API Response Structure:', JSON.stringify(data));
-      return res.status(500).json({ error: 'Received an empty or invalid response from the AI model.' });
-    }
-
-    // 7. إرجاع الاستجابة النهائية بنجاح
-    return res.status(200).json({ reply });
-
+    return res.status(200).json({ reply: aiMessage });
   } catch (error) {
-    console.error('Internal Server Error in /api/chat:', error);
-    return res.status(500).json({ error: error.message || 'Internal Server Error' });
+    return res.status(500).json({ error: error.message });
   }
-      } 
+}
