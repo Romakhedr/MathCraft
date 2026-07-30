@@ -566,10 +566,7 @@ async function sendToAI(text){
         addMsg('bot', replyText);
         aiHistory.push({ role: 'assistant', content: replyText });
       }
-    } catch(err) {
-      removeTyping();
-      addMsg('bot', 'Could not reach the assistant. Please check your internet connection.');
-  } 
+  
   } catch(err){
     removeTyping();
     addMsg('bot', 'Could not reach the AI assistant right now. Check your connection and try again.');
