@@ -2,14 +2,12 @@ export default async function handler(req, res) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method Not Allowed' });
   }
-
   const { prompt } = req.body;
   const apiKey = process.env.IBM_BOB_APIKEY ? process.env.IBM_BOB_APIKEY.trim() : null;
   const projectId = process.env.IBM_BOB_PROJECT_ID ? process.env.IBM_BOB_PROJECT_ID.trim() : null;
-
  const baseUrl = process.env.WATSONX_URL || 'https://us-south.ml.cloud.ibm.com';
 
-  if (!apiKey || !projectId) {
+ if (!apiKey || !projectId) {
     return res.status(500).json({ error: 'إعدادات المفاتيح غير مكتملة على السيرفر' });
   }
 
