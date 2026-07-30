@@ -4,9 +4,10 @@ export default async function handler(req, res) {
   }
 
   const { prompt } = req.body;
-  const apiKey = process.env.IBM_BOB_APIKEY;
-  const projectId = process.env.IBM_BOB_PROJECT_ID;
-  const baseUrl = process.env.WATSONX_URL || 'https://us-south.ml.cloud.ibm.com';
+  const apiKey = process.env.IBM_BOB_APIKEY ? process.env.IBM_BOB_APIKEY.trim() : null;
+  const projectId = process.env.IBM_BOB_PROJECT_ID ? process.env.IBM_BOB_PROJECT_ID.trim() : null;
+
+ const baseUrl = process.env.WATSONX_URL || 'https://us-south.ml.cloud.ibm.com';
 
   if (!apiKey || !projectId) {
     return res.status(500).json({ error: 'إعدادات المفاتيح غير مكتملة على السيرفر' });
