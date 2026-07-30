@@ -545,24 +545,31 @@ async function sendToAI(text){
   // Uses your project's own /api/chat.js endpoint (Vercel serverless function)
   const AI_PROXY_URL = "/api/chat";
 
-  try{
-    const response = await fetch(AI_PROXY_URL, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ messages: aiHistory })
-    });
-    const data = await response.json();
-    removeTyping();
+  try {
+      const response = await fetch(AI_PROXY_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ 
+          prompt: text, 
+          message: text,
+          messages: aiHistory 
+        })
+      });
 
-    if(!response.ok){
-      addMsg('bot', 'Something went wrong reaching the assistant. Please try again in a moment.');
-    } else {
-      // Supports both { reply: "..." } (your api/chat.js) and { content: [{type:'text', text:'...'}] }
-      const replyText = data.reply
-        || (data.content || []).map(block => block.type === 'text' ? block.text : '').filter(Boolean).join('\n');
-      addMsg('bot', replyText || "I couldn't generate a reply — try rephrasing your question.");
-      aiHistory.push({role:'assistant', content: replyText});
-    }
+      const data = await response.json();
+      removeTyping();
+
+      if (!response.ok) {
+        addMsg('bot', data.error || 'Something went wrong reaching the assistant. Please try again in a moment.');
+      } else {
+        const replyText = data.reply || data.response || data.text || 'No response';
+        addMsg('bot', replyText);
+        aiHistory.push({ role: 'assistant', content: replyText });
+      }
+    } catch(err) {
+      removeTyping();
+      addMsg('bot', 'Could not reach the assistant. Please check your internet connection.');
+  } 
   } catch(err){
     removeTyping();
     addMsg('bot', 'Could not reach the AI assistant right now. Check your connection and try again.');
