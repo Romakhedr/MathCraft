@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "dependencies": {
-    "@google/generative-ai": "^0.1.1"
+    "@google/generative-ai": "^0.1.1",
+    "@ibm-cloud/watsonx-ai": "^0.1.0"
   }
 }
