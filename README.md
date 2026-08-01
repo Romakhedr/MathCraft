@@ -61,4 +61,4 @@ GEMINI_API_KEY=your_gemini_fallback_key
 📝 About
 MathCraft aims to empower students worldwide by combining artificial intelligence with decentralized incentives, establishing a reliable, engaging, and efficient learning environment.
 
-Built with passion by Reham Hamdy Elsayed.
+Built with passion by Reham Hamdy Elsayed khedr.
