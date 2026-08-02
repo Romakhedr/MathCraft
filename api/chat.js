@@ -1,5 +1,4 @@
 export default async function handler(req, res) {
-  // التعامل مع معايير الأمان و CORS
   res.setHeader('Access-Control-Allow-Credentials', true);
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS,PATCH,DELETE,POST,PUT');
@@ -17,7 +16,7 @@ export default async function handler(req, res) {
   }
 
   try {
-    const { message }  = req.body;
+    const { message } = req.body;
 
     if (!message) {
       return res.status(400).json({ error: 'Message is required' });
@@ -27,7 +26,13 @@ export default async function handler(req, res) {
     const projectId = process.env.IBM_BOB_PROJECT_ID;
     const serviceUrl = process.env.WATSONX_URL || 'https://us-south.ml.cloud.ibm.com';
 
-    // 1. الحصول على رمز المصادقة (IAM Token) من IBM
+    // طباعة التحقق من وجود المتغيرات في البيئة
+    console.log("Checking Env variables...");
+    if (!apiKey || !projectId) {
+      return res.status(500).json({ error: 'Missing IBM_BOB_APIKEY or IBM_BOB_PROJECT_ID in environment variables' });
+    }
+
+    // 1. طلب الـ Token
     const tokenRes = await fetch('https://iam.cloud.ibm.com/identity/token', {
       method: 'POST',
       headers: {
@@ -37,13 +42,14 @@ export default async function handler(req, res) {
     });
 
     const tokenData = await tokenRes.json();
-    const accessToken = tokenData.access_token;
-
-    if (!accessToken) {
-      throw new Error('Failed to retrieve IBM IAM access token');
+    
+    if (!tokenData.access_token) {
+      return res.status(500).json({ error: 'IAM Token Error', details: tokenData });
     }
 
-    // 2. إرسال السؤال إلى نموذج واتسون (Granite)
+    const accessToken = tokenData.access_token;
+
+    // 2. إرسال الطلب لـ watsonx
     const aiRes = await fetch(`${serviceUrl}/ml/v1/text/generation?version=2023-05-29`, {
       method: 'POST',
       headers: {
@@ -64,15 +70,15 @@ export default async function handler(req, res) {
 
     const aiData = await aiRes.json();
 
-    if (!aiData.results || aiData.results.length === 0) {
-      throw new Error('Invalid response from IBM AI service');
+    if (!aiRes.ok || !aiData.results || aiData.results.length === 0) {
+      return res.status(500).json({ error: 'IBM AI API Error', details: aiData });
     }
 
     const reply = aiData.results[0].generated_text;
-
     return res.status(200).json({ reply });
+
   } catch (error) {
-    console.error('Error communicating with IBM AI:', error);
-    return res.status(500).json({ error: 'Failed to process AI request' });
+    console.error('Catch Error:', error);
+    return res.status(500).json({ error: 'Failed to process AI request', details: error.message });
   }
-      }
+    }
