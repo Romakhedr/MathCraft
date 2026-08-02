@@ -26,14 +26,14 @@ export default async function handler(req, res) {
     }
 
     const watsonxAI = new WatsonXAI({
-      apikey: process.env.IBM_BO_APIKEY,
+      apikey: process.env.IBM_BOB_APIKEY,
       serviceUrl: process.env.WATSONX_URL || 'https://us-south.ml.cloud.ibm.com',
     });
 
     const response = await watsonxAI.generateText({
       modelId: 'ibm/granite-3-8b-instruct',
       input: message,
-      projectId: process.env.IBM_BO_ECT_ID,
+      projectId: process.env.IBM_BOB_PROJECT_ID,
       parameters: {
         max_new_tokens: 500,
         temperature: 0.7,
