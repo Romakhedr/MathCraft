@@ -30,13 +30,31 @@ export default async function handler(req, res) {
       return res.status(500).json({ error: 'Missing API Key in environment variables' });
     }
 
-    // الاتصال المباشر بنموذج IBM Bob SaaS باستخدام المفتاح والمشروع
+    // 1. جلب التوكن بطريقة IAM القياسية التي تقبلها خوادم IBM
+    const tokenRes = await fetch('https://iam.cloud.ibm.com/identity/token', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+        'Accept': 'application/json',
+      },
+      body: `grant_type=urn:ibm:params:oauth:grant-type:apikey&apikey=${apiKey}`,
+    });
+
+    const tokenData = await tokenRes.json();
+    
+    if (!tokenRes.ok || !tokenData.access_token) {
+      return res.status(500).json({ error: 'Failed to authenticate with IBM IAM', details: tokenData });
+    }
+
+    const accessToken = tokenData.access_token;
+
+    // 2. إرسال الطلب للنموذج بالهيكل القياسي المعتمد في watsonx
     const aiRes = await fetch(`${serviceUrl}/ml/v1/text/generation?version=2023-05-29`, {
       method: 'POST',
       headers: {
         'Accept': 'application/json',
         'Content-Type': 'application/json',
-        'Authorization': `Basic ${Buffer.from(`apikey:${apiKey}`).toString('base64')}`,
+        'Authorization': `Bearer ${accessToken}`,
       },
       body: JSON.stringify({
         model_id: 'ibm/granite-3-8b-instruct',
@@ -51,11 +69,17 @@ export default async function handler(req, res) {
 
     const aiData = await aiRes.json();
 
-    if (!aiRes.ok || !aiData.results || aiData.results.length === 0) {
-      return res.status(500).json({ error: 'IBM Bob API rejection', details: aiData });
+    if (!aiRes.ok) {
+      return res.status(500).json({ error: 'IBM watsonx API rejection', details: aiData });
     }
 
-    const reply = aiData.results[0].generated_text;
+    let reply = "عذراً، لم يتم العثور على رد من النموذج.";
+    if (aiData.results && aiData.results.length > 0) {
+      reply = aiData.results[0].generated_text;
+    } else if (aiData.generated_text) {
+      reply = aiData.generated_text;
+    }
+
     return res.status(200).json({ reply });
 
   } catch (error) {
