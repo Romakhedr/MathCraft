@@ -68,6 +68,7 @@ export default async function handler(req, res) {
     return res.status(200).json({ reply });
 
   } catch (error) {
+  console.error("API Error Details:", error); 
     return res.status(500).json({ 
       error: 'Internal server error during AI processing', 
       message: error.message 
