@@ -2,6 +2,7 @@
   "name": "mathcraft",
   "version": "1.0.0",
   "private": true,
+  "type": "module",
   "dependencies": {
     "@google/generative-ai": "^0.1.1",
     "@ibm-cloud/watsonx-ai": "^0.1.0"
