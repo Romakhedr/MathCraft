@@ -46,7 +46,7 @@ MathCraft is built on three core pillars:
 * **Symbol:** `MTH`
 * **Standard:** ERC-20
 * **Network:** BNB Smart Chain / Ethereum Testnet
-* **Contract Address:** `0x...` *(ضع0xd9145CCE52D386f254917e481eB44e9943F39138)* 
+  **Contract Address:**(Oxd9145CCE52D386f254917e481eB44e9943F39138)* 
 
 ---
 
