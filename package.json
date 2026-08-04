@@ -5,6 +5,7 @@
   "type": "module",
   "dependencies": {
     "@google/generative-ai": "^0.1.1",
-    "@ibm-cloud/watsonx-ai": "^0.1.0"
+    "@ibm-cloud/watsonx-ai": "^0.1.0",
+    "@vercel/kv": "^1.0.0"
   }
 }
