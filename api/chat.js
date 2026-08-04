@@ -1,9 +1,8 @@
 // ==============================================================================
-// 🎯 MathCraft AI Engine - AI Builders Challenge (IBM Bob + Gemini Fallback)
+// 🎯 MathCraft AI Engine - Pure Google Gemini API Integration
 // ==============================================================================
 
 import { kv } from '@vercel/kv';
-import { GoogleGenerativeAI } from '@google/generative-ai';
 
 // --- 1. نظام حماية معدل الطلبات عبر Vercel KV ---
 const RATE_LIMIT_WINDOW_SECONDS = 60;
@@ -21,7 +20,7 @@ async function isRateLimited(clientIp) {
     return currentRequests > MAX_REQUESTS_PER_WINDOW;
   } catch (error) {
     console.warn('⚠️ Vercel KV Rate Limit Warning:', error.message);
-    return false; 
+    return false;
   }
 }
 
@@ -44,7 +43,7 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: 'Method not allowed. Please use POST.' });
   }
 
-  // --- 3. فحص معدل الطلبات ---
+  // --- 3. فحص Rate Limiting ---
   const clientIp = req.headers['x-forwarded-for']?.split(',')[0] || req.socket?.remoteAddress || 'unknown_ip';
   const isLimited = await isRateLimited(clientIp);
 
@@ -62,76 +61,39 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: 'Valid math question message is required' });
     }
 
-    let replyText = "";
-    let aiProvider = "None";
-    let ibmSuccess = false;
-
-    // --- 4. المحاولة الأولى: الاتصال بخادم IBM Bob (حسب شروط المسابقة) ---
-    const ibmApiKey = process.env.IBM_BOB_APIKEY;
-    const ibmProjectId = process.env.IBM_BOB_PROJECT_ID;
+    // --- 4. الاعتماد الكلي على مفتاح Gemini بشكل مباشر ---
+    const geminiApiKey = process.env.GEMINI_API_KEY;
     
-    if (ibmApiKey) {
-      try {
-        const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 15000);
-
-        const ibmRes = await fetch('https://bob.ibm.com/ml/v1/text/generation?version=2023-05-29', {
-          method: 'POST',
-          headers: {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${ibmApiKey}`,
-          },
-          body: JSON.stringify({
-            model_id: 'ibm/granite-3-8b-instruct',
-            input: `You are MathCraft Assistant, an expert AI math tutor. Answer the student's question clearly step-by-step:\n\n${message.trim()}`,
-            project_id: ibmProjectId || undefined,
-            parameters: { max_new_tokens: 600, temperature: 0.7 }
-          }),
-          signal: controller.signal
-        });
-
-        clearTimeout(timeoutId);
-
-        if (ibmRes.ok) {
-          const ibmData = await ibmRes.json();
-          replyText = ibmData.results?.[0]?.generated_text || ibmData.generated_text;
-          ibmSuccess = true;
-          aiProvider = "IBM Granite";
-        } else {
-          console.warn("⚠️ IBM Bob Failed (Likely out of 40 coins). Switching routing to Gemini...");
-        }
-      } catch (ibmError) {
-        console.warn("⚠️ IBM Bob Error/Timeout. Switching routing to Gemini...");
-      }
+    if (!geminiApiKey) {
+      return res.status(500).json({ error: 'Missing GEMINI_API_KEY in Vercel environment' });
     }
 
-    // --- 5. المحاولة الثانية (المنقذ): توجيه المسار إلى Google Gemini مجاناً ---
-    if (!ibmSuccess) {
-      const geminiApiKey = process.env.GEMINI_API_KEY;
-      
-      if (!geminiApiKey) {
-        return res.status(500).json({ 
-          error: 'AI Services Exhausted', 
-          message: 'انتهى رصيد IBM ولم يتم العثور على مفتاح Gemini البديل.' 
-        });
-      }
+    const prompt = `You are MathCraft Assistant, an expert AI math tutor. Answer the student's question clearly step-by-step in Arabic or English based on the question language:\n\n${message.trim()}`;
+    
+    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${geminiApiKey}`;
+    
+    // --- 5. استدعاء API مباشرة (بِلا حزم إضافية) ---
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        contents: [{ parts: [{ text: prompt }] }]
+      })
+    });
 
-      const genAI = new GoogleGenerativeAI(geminiApiKey);
-      const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
-      
-      const prompt = `You are MathCraft Assistant, an expert AI math tutor. Answer the student's question clearly step-by-step:\n\n${message.trim()}`;
-      const result = await model.generateContent(prompt);
-      
-      replyText = result.response.text();
-      aiProvider = "Google Gemini";
+    const data = await response.json();
+
+    if (!response.ok) {
+      console.error("Gemini API Error:", data);
+      return res.status(500).json({ error: 'AI provider error', details: data });
     }
 
-    // --- 6. إرسال الإجابة النهائية للواجهة ---
+    // --- 6. استخراج الإجابة ---
+    const reply = data.candidates?.[0]?.content?.parts?.[0]?.text || "عذراً، لم أتمكن من استخراج الإجابة.";
+
     return res.status(200).json({
       success: true,
-      provider: aiProvider, // لمعرفة أي ذكاء اصطناعي قام بالرد
-      reply: replyText.trim()
+      reply: reply.trim()
     });
 
   } catch (error) {
@@ -141,4 +103,4 @@ export default async function handler(req, res) {
       message: error.message
     });
   }
-}
+    }
