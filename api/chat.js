@@ -1,8 +1,9 @@
 // ==============================================================================
-// 🎯 MathCraft AI Engine - Production Ready with IBM IAM Authentication
+// 🎯 MathCraft AI Engine - AI Builders Challenge (IBM Bob + Gemini Fallback)
 // ==============================================================================
 
 import { kv } from '@vercel/kv';
+import { GoogleGenerativeAI } from '@google/generative-ai';
 
 // --- 1. نظام حماية معدل الطلبات عبر Vercel KV ---
 const RATE_LIMIT_WINDOW_SECONDS = 60;
@@ -20,33 +21,12 @@ async function isRateLimited(clientIp) {
     return currentRequests > MAX_REQUESTS_PER_WINDOW;
   } catch (error) {
     console.warn('⚠️ Vercel KV Rate Limit Warning:', error.message);
-    return false;
+    return false; 
   }
-}
-
-// --- 2. دالة توليد IAM Access Token تلقائياً من IBM ---
-async function getIBMIAMToken(apiKey) {
-  const params = new URLSearchParams();
-  params.append('grant_type', 'urn:ibm:params:oauth:grant-type:apikey');
-  params.append('apikey', apiKey);
-
-  const tokenResponse = await fetch('https://iam.cloud.ibm.com/identity/token', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-    body: params.toString()
-  });
-
-  if (!tokenResponse.ok) {
-    const tokenErr = await tokenResponse.json().catch(() => ({}));
-    throw new Error(`IBM IAM Auth Failed (${tokenResponse.status}): ${JSON.stringify(tokenErr)}`);
-  }
-
-  const tokenData = await tokenResponse.json();
-  return tokenData.access_token;
 }
 
 export default async function handler(req, res) {
-  // --- 3. ضبط سياسات CORS ---
+  // --- 2. ضبط سياسات CORS ---
   const origin = req.headers.origin || '*';
   res.setHeader('Access-Control-Allow-Origin', origin);
   res.setHeader('Access-Control-Allow-Credentials', 'true');
@@ -64,14 +44,14 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: 'Method not allowed. Please use POST.' });
   }
 
-  // --- 4. فحص Rate Limiting ---
+  // --- 3. فحص معدل الطلبات ---
   const clientIp = req.headers['x-forwarded-for']?.split(',')[0] || req.socket?.remoteAddress || 'unknown_ip';
   const isLimited = await isRateLimited(clientIp);
 
   if (isLimited) {
     return res.status(429).json({
       error: 'Too many requests',
-      message: 'تجاوزت الحد المسموح من الطلبات! يرجى الانتظار لمدة دقيقة ثم المحاولة مجدداً.'
+      message: 'تجاوزت الحد المسموح من الطلبات! يرجى الانتظار لمدة دقيقة.'
     });
   }
 
@@ -82,79 +62,80 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: 'Valid math question message is required' });
     }
 
-    // --- 5. قراءة المتغيرات ---
-    const apiKey = process.env.IBM_BOB_APIKEY || process.env.WATSONX_API_KEY;
-    const projectId = process.env.IBM_BOB_PROJECT_ID || process.env.WATSONX_PROJECT_ID;
-    let serviceUrl = process.env.WATSONX_URL || 'https://us-east.ml.cloud.ibm.com';
+    let replyText = "";
+    let aiProvider = "None";
+    let ibmSuccess = false;
 
-    if (!apiKey) {
-      return res.status(500).json({ error: 'Missing IBM_BOB_APIKEY environment variable' });
+    // --- 4. المحاولة الأولى: الاتصال بخادم IBM Bob (حسب شروط المسابقة) ---
+    const ibmApiKey = process.env.IBM_BOB_APIKEY;
+    const ibmProjectId = process.env.IBM_BOB_PROJECT_ID;
+    
+    if (ibmApiKey) {
+      try {
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 15000);
+
+        const ibmRes = await fetch('https://bob.ibm.com/ml/v1/text/generation?version=2023-05-29', {
+          method: 'POST',
+          headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${ibmApiKey}`,
+          },
+          body: JSON.stringify({
+            model_id: 'ibm/granite-3-8b-instruct',
+            input: `You are MathCraft Assistant, an expert AI math tutor. Answer the student's question clearly step-by-step:\n\n${message.trim()}`,
+            project_id: ibmProjectId || undefined,
+            parameters: { max_new_tokens: 600, temperature: 0.7 }
+          }),
+          signal: controller.signal
+        });
+
+        clearTimeout(timeoutId);
+
+        if (ibmRes.ok) {
+          const ibmData = await ibmRes.json();
+          replyText = ibmData.results?.[0]?.generated_text || ibmData.generated_text;
+          ibmSuccess = true;
+          aiProvider = "IBM Granite";
+        } else {
+          console.warn("⚠️ IBM Bob Failed (Likely out of 40 coins). Switching routing to Gemini...");
+        }
+      } catch (ibmError) {
+        console.warn("⚠️ IBM Bob Error/Timeout. Switching routing to Gemini...");
+      }
     }
 
-    // --- 6. خطوة توليد IAM Token من IBM ---
-    const accessToken = await getIBMIAMToken(apiKey);
+    // --- 5. المحاولة الثانية (المنقذ): توجيه المسار إلى Google Gemini مجاناً ---
+    if (!ibmSuccess) {
+      const geminiApiKey = process.env.GEMINI_API_KEY;
+      
+      if (!geminiApiKey) {
+        return res.status(500).json({ 
+          error: 'AI Services Exhausted', 
+          message: 'انتهى رصيد IBM ولم يتم العثور على مفتاح Gemini البديل.' 
+        });
+      }
 
-    // تجهيز رابط الخدمة المعياري
-    serviceUrl = serviceUrl.replace(/\/$/, '');
-    const targetUrl = serviceUrl.includes('/v1/text/generation')
-      ? serviceUrl
-      : `${serviceUrl}/ml/v1/text/generation?version=2023-05-29`;
-
-    // --- 7. الاتصال بنموذج IBM Granite ---
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 25000);
-
-    const aiRes = await fetch(targetUrl, {
-      method: 'POST',
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${accessToken}`, // استخدام Access Token المستخرج
-      },
-      body: JSON.stringify({
-        model_id: 'ibm/granite-3-8b-instruct',
-        input: `You are MathCraft Assistant, an expert AI math tutor. Answer the student's question clearly step-by-step in Arabic or English based on the question language:\n\n${message.trim()}`,
-        project_id: projectId || undefined,
-        parameters: {
-          max_new_tokens: 700,
-          temperature: 0.7,
-        },
-      }),
-      signal: controller.signal
-    });
-
-    clearTimeout(timeoutId);
-
-    const aiData = await aiRes.json();
-
-    if (!aiRes.ok) {
-      console.error("❌ IBM Generation Rejection:", aiData);
-      return res.status(500).json({ error: 'AI processing service rejection', details: aiData });
+      const genAI = new GoogleGenerativeAI(geminiApiKey);
+      const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
+      
+      const prompt = `You are MathCraft Assistant, an expert AI math tutor. Answer the student's question clearly step-by-step:\n\n${message.trim()}`;
+      const result = await model.generateContent(prompt);
+      
+      replyText = result.response.text();
+      aiProvider = "Google Gemini";
     }
 
-    // --- 8. استخلاص الإجابة ---
-    let reply = "عذراً، لم أتمكن من معالجة المسألة الرياضية حالياً.";
-    if (aiData.results && aiData.results.length > 0) {
-      reply = aiData.results[0].generated_text;
-    } else if (aiData.generated_text) {
-      reply = aiData.generated_text;
-    }
-
+    // --- 6. إرسال الإجابة النهائية للواجهة ---
     return res.status(200).json({
       success: true,
-      reply: reply.trim()
+      provider: aiProvider, // لمعرفة أي ذكاء اصطناعي قام بالرد
+      reply: replyText.trim()
     });
 
   } catch (error) {
     console.error("API Error Details:", error);
-
-    if (error.name === 'AbortError') {
-      return res.status(540).json({
-        error: 'Timeout error',
-        message: 'استغرق خادم الذكاء الاصطناعي وقتاً أطول من المتوقع، يرجى إعادة المحاولة.'
-      });
-    }
-
     return res.status(500).json({
       error: 'Internal server error during AI processing',
       message: error.message
