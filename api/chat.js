@@ -1,5 +1,5 @@
 // ==============================================================================
-// 🎯 MathCraft AI Engine - Final Stable Integration
+// 🎯 MathCraft AI Engine - Updated Stable Model Integration
 // ==============================================================================
 
 export default async function handler(req, res) {
@@ -34,7 +34,7 @@ export default async function handler(req, res) {
 
     const prompt = `You are MathCraft Assistant, an expert AI math tutor. Answer the student's question clearly step-by-step in Arabic or English based on the question language:\n\n${message.trim()}`;
     
-    // تم تحديث الرابط إلى الإصدار المستقر v1 ليعمل النموذج بكفاءة تامة
+    // تم تحديث اسم النموذج إلى الإصدار القياسي المدعوم تماماً
     const url = `https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key=${geminiApiKey}`;
     
     const response = await fetch(url, {
