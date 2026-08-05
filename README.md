@@ -24,17 +24,16 @@
 
 MathCraft is built on three core pillars:
 
-* 🤖 **AI-Powered Real-Time Tutor:** Explains complex mathematical concepts and step-by-step mistake solutions powered by **IBM watsonx AI** (with Google Gemini Fallback support).
+* 🤖 **AI-Powered Real-Time Tutor:** Explains complex mathematical concepts and step-by-step mistake solutions powered by **IBM watsonx AI**
 * 📊 **Adaptive Progress Analytics:** Dynamic dashboard that tracks student milestones, performance speed, and accuracy precision.
 * 🪙 **Web3 Tokenized Rewards:** Seamless blockchain integration rewarding student progress with native **MathCraft Tokens (MTH)**.
 
 ---
-
-## 🛠 Tech Stack
+## 🛠️ Tech Stack
 
 * **Frontend:** HTML5, CSS3, JavaScript (ES6+), Web3.js / Ethers.js
 * **Backend:** Vercel Serverless Functions (Node.js)
-* **AI Engine:** IBM Cloud IAM / watsonx AI APIs, Google Gemini API
+* **AI Engine:** IBM watsonx AI / IBM Bob APIs (Granite Model)
 * **Blockchain:** Solidity, ERC-20 Smart Contract (OpenZeppelin)
 * **UI/UX Design:** Minimalist 'Quiet Luxury' Aesthetic
 
