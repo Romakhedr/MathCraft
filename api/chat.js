@@ -1,5 +1,5 @@
 // ==============================================================================
-// 🔍 MathCraft - Direct Diagnostic UI Script
+// 🎯 MathCraft AI Engine - Final Stable Integration
 // ==============================================================================
 
 export default async function handler(req, res) {
@@ -28,12 +28,14 @@ export default async function handler(req, res) {
     if (!geminiApiKey) {
       return res.status(200).json({ 
         success: true, 
-        reply: "⚠️ تنبيه من الخادم: متغير GEMINI_API_KEY غير موجود أو لم يتم حفظه بشكل صحيح في Vercel Environment Variables." 
+        reply: "⚠️ تنبيه: متغير GEMINI_API_KEY غير موجود في إعدادات Vercel." 
       });
     }
 
-    const prompt = `You are MathCraft Assistant, an expert AI math tutor. Answer clearly step-by-step:\n\n${message.trim()}`;
-    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${geminiApiKey}`;
+    const prompt = `You are MathCraft Assistant, an expert AI math tutor. Answer the student's question clearly step-by-step in Arabic or English based on the question language:\n\n${message.trim()}`;
+    
+    // تم تحديث الرابط إلى الإصدار المستقر v1 ليعمل النموذج بكفاءة تامة
+    const url = `https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key=${geminiApiKey}`;
     
     const response = await fetch(url, {
       method: 'POST',
@@ -45,12 +47,11 @@ export default async function handler(req, res) {
 
     const data = await response.json();
 
-    // إذا رفضت جوجل الطلب، سنطبع رسالة الخطأ الحرفية التي أرسلتها جوجل داخل فقاعة الدردشة
     if (!response.ok) {
       const googleError = data.error?.message || JSON.stringify(data);
       return res.status(200).json({ 
         success: true, 
-        reply: `❌ رفضت جوجل الطلب بالرسالة التالية:\n${googleError}` 
+        reply: `❌ خطأ من جوجل: ${googleError}` 
       });
     }
 
