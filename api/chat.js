@@ -1,115 +1,71 @@
-import { NextResponse } from 'next/server';
-
 // ==============================================================================
-// ⚙️ Configuration & Constants
+// 🎯 MathCraft AI Engine - Final Stable Integration
 // ==============================================================================
-// تأكدي من ضبط الرابط الصحيح لمنطقتك على IBM watsonx (مثلاً us-south.ml.cloud.ibm.com)
-const DEFAULT_IBM_URL = 'https://us-south.ml.cloud.ibm.com/ml/v1/text/generation?version=2023-05-29';
-const IBM_MODEL_ID = 'ibm/granite-3-8b-instruct';
-const MAX_MESSAGE_LENGTH = 1000;
-const TIMEOUT_MS = 15000;
 
-export async function POST(request) {
+export default async function handler(req, res) {
+  const origin = req.headers.origin || '*';
+  res.setHeader('Access-Control-Allow-Origin', origin);
+  res.setHeader('Access-Control-Allow-Credentials', 'true');
+  res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS,POST');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+
+  if (req.method === 'OPTIONS') {
+    return res.status(200).end();
+  }
+
+  if (req.method !== 'POST') {
+    return res.status(405).json({ error: 'Method not allowed' });
+  }
+
   try {
-    const body = await request.json();
-    const message = body.message || (body.messages && body.messages[body.messages.length - 1]?.content);
-
+    const { message } = req.body || {};
     if (!message || typeof message !== 'string') {
-      return NextResponse.json({ success: false, reply: 'عذراً، يرجى كتابة سؤال صالح.' }, { status: 400 });
+      return res.status(400).json({ error: 'Message is required' });
     }
+
+    const geminiApiKey = process.env.GEMINI_API_KEY;
     
-    const sanitizedMessage = message.trim();
-    if (sanitizedMessage.length === 0 || sanitizedMessage.length > MAX_MESSAGE_LENGTH) {
-      return NextResponse.json({ 
-        success: false, 
-        reply: 'عذراً، رسالتك إما فارغة أو تتجاوز الحد الأقصى للأحرف.' 
-      }, { status: 400 });
+    if (!geminiApiKey) {
+      return res.status(200).json({ 
+        success: true, 
+        reply: "⚠️ تنبيه: متغير GEMINI_API_KEY غير موجود في إعدادات Vercel." 
+      });
     }
 
-    const ibmApiKey = process.env.IBM_BOB_APIKEY || process.env.IBM_CLOUD_API_KEY;
-    const projectId = process.env.IBM_BOB_PROJECT_ID || process.env.WATSONX_PROJECT_ID;
-    const ibmUrl = process.env.WATSONX_URL || DEFAULT_IBM_URL;
-
-    if (!ibmApiKey) {
-      console.error("[MathCraft System] Error: IBM API Key is missing.");
-      return NextResponse.json({ 
-        success: false, 
-        reply: 'عذراً، هناك مشكلة في إعدادات مفتاح الخادم.' 
-      }, { status: 500 });
-    }
-
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), TIMEOUT_MS);
-
-    const prompt = `You are MathCraft Assistant, an expert AI math tutor. Answer the student's question clearly step-by-step:\n\n${sanitizedMessage}`;
-
-    const ibmRes = await fetch(ibmUrl, {
+    const prompt = `You are MathCraft Assistant, an expert AI math tutor. Answer the student's question clearly step-by-step in Arabic or English based on the question language:\n\n${message.trim()}`;
+    
+    // تم تحديث الرابط إلى الإصدار المستقر v1 ليعمل النموذج بكفاءة تامة
+    const url = `https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key=${geminiApiKey}`;
+    
+    const response = await fetch(url, {
       method: 'POST',
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${ibmApiKey}`,
-      },
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        model_id: IBM_MODEL_ID,
-        input: prompt,
-        project_id: projectId || undefined,
-        parameters: {
-          max_new_tokens: 500,
-          temperature: 0.7,
-        },
-      }),
-      signal: controller.signal
+        contents: [{ parts: [{ text: prompt }] }]
+      })
     });
 
-    clearTimeout(timeoutId);
+    const data = await response.json();
 
-    // قراءة الاستجابة كـ Text أولاً لتجنب انهيار الخادم إذا كانت صفحة HTML
-    const responseText = await ibmRes.text();
-    let data;
-    try {
-      data = JSON.parse(responseText);
-    } catch (e) {
-      console.error("[IBM Server Non-JSON Response]:", responseText);
-      return NextResponse.json({ 
-        success: false, 
-        reply: '❌ خطأ: أرجع خادم IBM استجابة غير صالحة (تحقق من صحة WATSONX_URL).' 
-      }, { status: 502 });
+    if (!response.ok) {
+      const googleError = data.error?.message || JSON.stringify(data);
+      return res.status(200).json({ 
+        success: true, 
+        reply: `❌ خطأ من جوجل: ${googleError}` 
+      });
     }
 
-    if (!ibmRes.ok) {
-      console.error("[IBM Server Error]:", data);
-      return NextResponse.json({ 
-        success: false, 
-        reply: `❌ رفض خادم IBM الطلب: ${data.error?.message || 'خطأ في المصادقة أو المعلمات'}` 
-      }, { status: ibmRes.status });
-    }
+    const reply = data.candidates?.[0]?.content?.parts?.[0]?.text || "عذراً، لم أتمكن من استخراج الإجابة.";
 
-    let reply = "عذراً، لم أتمكن من صياغة الإجابة.";
-    if (data.results && data.results.length > 0) {
-      reply = data.results[0].generated_text;
-    } else if (data.generated_text) {
-      reply = data.generated_text;
-    }
-
-    return NextResponse.json({
+    return res.status(200).json({
       success: true,
       reply: reply.trim()
     });
 
   } catch (error) {
-    if (error.name === 'AbortError') {
-      console.error("[MathCraft System] Request timed out.");
-      return NextResponse.json({ 
-        success: false, 
-        reply: 'عذراً، استغرق خادم IBM وقتاً أطول من اللازم للرد.' 
-      }, { status: 504 });
-    }
-
-    console.error("[MathCraft System] Critical Error:", error.message);
-    return NextResponse.json({ 
-      success: false, 
-      reply: 'حدث خطأ غير متوقع أثناء الاتصال بالخادم.' 
-    }, { status: 500 });
+    return res.status(200).json({ 
+      success: true, 
+      reply: `❌ حدث استثناء في الخادم: ${error.message}` 
+    });
   }
 }
