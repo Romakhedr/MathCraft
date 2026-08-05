@@ -56,8 +56,9 @@ To run this project locally, create a `.env` file in the root directory and add:
 
 ```env
 IBM_BOB_APIKEY=your_ibm_api_key
+IBMBob=yourIBMBobID
 IBM_BOB_PROJECT_ID=your_project_id
-WATSONX_URL=
+WATSONX_URL= your 
 📝 About
 MathCraft aims to empower students worldwide by combining artificial intelligence with decentralized incentives, establishing a reliable, engaging, and efficient learning environment.
 
