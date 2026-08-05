@@ -1,86 +1,115 @@
-export default async function handler(req, res) {
-  // 1. إعدادات CORS للسماح بالاتصال
-  res.setHeader('Access-Control-Allow-Credentials', true);
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS,PATCH,DELETE,POST,PUT');
-  res.setHeader('Access-Control-Allow-Headers', 'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version, Authorization');
+import { NextResponse } from 'next/server';
 
-  if (req.method === 'OPTIONS') return res.status(200).end();
-  if (req.method !== 'POST') return res.status(405).json({ success: false, error: 'Method Not Allowed' });
+// ==============================================================================
+// ⚙️ Configuration & Constants
+// ==============================================================================
+// تأكدي من ضبط الرابط الصحيح لمنطقتك على IBM watsonx (مثلاً us-south.ml.cloud.ibm.com)
+const DEFAULT_IBM_URL = 'https://us-south.ml.cloud.ibm.com/ml/v1/text/generation?version=2023-05-29';
+const IBM_MODEL_ID = 'ibm/granite-3-8b-instruct';
+const MAX_MESSAGE_LENGTH = 1000;
+const TIMEOUT_MS = 15000;
 
+export async function POST(request) {
   try {
-    const { message, history, messages } = req.body || {};
+    const body = await request.json();
+    const message = body.message || (body.messages && body.messages[body.messages.length - 1]?.content);
+
+    if (!message || typeof message !== 'string') {
+      return NextResponse.json({ success: false, reply: 'عذراً، يرجى كتابة سؤال صالح.' }, { status: 400 });
+    }
     
-    if (!message) {
-      return res.status(400).json({ success: false, reply: 'الرجاء إرسال سؤال رياضي.' });
+    const sanitizedMessage = message.trim();
+    if (sanitizedMessage.length === 0 || sanitizedMessage.length > MAX_MESSAGE_LENGTH) {
+      return NextResponse.json({ 
+        success: false, 
+        reply: 'عذراً، رسالتك إما فارغة أو تتجاوز الحد الأقصى للأحرف.' 
+      }, { status: 400 });
     }
 
-    // 2. جلب متغيرات البيئة الخاصة بـ IBM من Vercel
-    const apiKey = process.env.IBM_BOB_APIKEY;
-    const projectId = process.env.IBM_BOB_PROJECT_ID;
-    const watsonxUrl = process.env.WATSONX_URL || 'https://us-south.ml.cloud.ibm.com/ml/v1/text/generation?version=2023-05-29';
-    const modelId = process.env.IBM_MODEL_ID || 'ibm/granite-3-8b-instruct';
+    const ibmApiKey = process.env.IBM_BOB_APIKEY || process.env.IBM_CLOUD_API_KEY;
+    const projectId = process.env.IBM_BOB_PROJECT_ID || process.env.WATSONX_PROJECT_ID;
+    const ibmUrl = process.env.WATSONX_URL || DEFAULT_IBM_URL;
 
-    if (!apiKey) {
-      console.error("[MathCraft] Error: IBM API Key is missing.");
-      return res.status(500).json({ success: false, reply: 'مفتاح IBM غير مكوّن في Vercel.' });
+    if (!ibmApiKey) {
+      console.error("[MathCraft System] Error: IBM API Key is missing.");
+      return NextResponse.json({ 
+        success: false, 
+        reply: 'عذراً، هناك مشكلة في إعدادات مفتاح الخادم.' 
+      }, { status: 500 });
     }
 
-    // 3. الخطوة الحاسمة لحل خطأ 401: تحويل API Key إلى IAM Access Token
-    const tokenResponse = await fetch('https://iam.cloud.ibm.com/identity/token', {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), TIMEOUT_MS);
+
+    const prompt = `You are MathCraft Assistant, an expert AI math tutor. Answer the student's question clearly step-by-step:\n\n${sanitizedMessage}`;
+
+    const ibmRes = await fetch(ibmUrl, {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
         'Accept': 'application/json',
-      },
-      body: `grant_type=urn:ibm:params:oauth:grant-type:apikey&apikey=${apiKey}`
-    });
-
-    if (!tokenResponse.ok) {
-      console.error("[MathCraft] IAM Token Error:", await tokenResponse.text());
-      return res.status(401).json({ success: false, reply: '❌ خطأ 401: مفتاح IBM API غير صحيح. يرجى التأكد من نسخه بدون مسافات إضافية.' });
-    }
-
-    const tokenData = await tokenResponse.json();
-    const accessToken = tokenData.access_token;
-
-    // 4. إرسال الطلب لخادم IBM watsonx باستخدام التوكن الصحيح
-    const prompt = `You are MathCraft Assistant, an expert AI math tutor designed for the IBM Bob Challenge. Answer the student's question clearly with step-by-step mathematical explanations:\n\nStudent Question: ${message}`;
-
-    const ibmResponse = await fetch(watsonxUrl, {
-      method: 'POST',
-      headers: {
         'Content-Type': 'application/json',
-        'Accept': 'application/json',
-        'Authorization': `Bearer ${accessToken}`
+        'Authorization': `Bearer ${ibmApiKey}`,
       },
       body: JSON.stringify({
-        model_id: modelId,
+        model_id: IBM_MODEL_ID,
         input: prompt,
         project_id: projectId || undefined,
         parameters: {
-          max_new_tokens: 600,
+          max_new_tokens: 500,
           temperature: 0.7,
-        }
-      })
+        },
+      }),
+      signal: controller.signal
     });
 
-    if (!ibmResponse.ok) {
-      const errorText = await ibmResponse.text();
-      console.error("[MathCraft] Watsonx Error:", errorText);
-      return res.status(ibmResponse.status).json({ success: false, reply: '❌ خادم IBM رفض الطلب. تأكد من صحة رقم المشروع (Project ID).' });
+    clearTimeout(timeoutId);
+
+    // قراءة الاستجابة كـ Text أولاً لتجنب انهيار الخادم إذا كانت صفحة HTML
+    const responseText = await ibmRes.text();
+    let data;
+    try {
+      data = JSON.parse(responseText);
+    } catch (e) {
+      console.error("[IBM Server Non-JSON Response]:", responseText);
+      return NextResponse.json({ 
+        success: false, 
+        reply: '❌ خطأ: أرجع خادم IBM استجابة غير صالحة (تحقق من صحة WATSONX_URL).' 
+      }, { status: 502 });
     }
 
-    const data = await ibmResponse.json();
+    if (!ibmRes.ok) {
+      console.error("[IBM Server Error]:", data);
+      return NextResponse.json({ 
+        success: false, 
+        reply: `❌ رفض خادم IBM الطلب: ${data.error?.message || 'خطأ في المصادقة أو المعلمات'}` 
+      }, { status: ibmRes.status });
+    }
+
     let reply = "عذراً، لم أتمكن من صياغة الإجابة.";
     if (data.results && data.results.length > 0) {
       reply = data.results[0].generated_text;
+    } else if (data.generated_text) {
+      reply = data.generated_text;
     }
 
-    return res.status(200).json({ success: true, reply: reply.trim() });
+    return NextResponse.json({
+      success: true,
+      reply: reply.trim()
+    });
 
   } catch (error) {
-    console.error("[MathCraft] Server Error:", error);
-    return res.status(500).json({ success: false, reply: 'حدث خطأ غير متوقع في الخادم.' });
+    if (error.name === 'AbortError') {
+      console.error("[MathCraft System] Request timed out.");
+      return NextResponse.json({ 
+        success: false, 
+        reply: 'عذراً، استغرق خادم IBM وقتاً أطول من اللازم للرد.' 
+      }, { status: 504 });
+    }
+
+    console.error("[MathCraft System] Critical Error:", error.message);
+    return NextResponse.json({ 
+      success: false, 
+      reply: 'حدث خطأ غير متوقع أثناء الاتصال بالخادم.' 
+    }, { status: 500 });
   }
 }
