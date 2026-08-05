@@ -1,71 +1,74 @@
-// ==============================================================================
-// 🎯 MathCraft AI Engine - Final Stable Integration
-// ==============================================================================
+import { NextResponse } from 'next/server';
 
-export default async function handler(req, res) {
-  const origin = req.headers.origin || '*';
-  res.setHeader('Access-Control-Allow-Origin', origin);
-  res.setHeader('Access-Control-Allow-Credentials', 'true');
-  res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS,POST');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-
-  if (req.method === 'OPTIONS') {
-    return res.status(200).end();
-  }
-
-  if (req.method !== 'POST') {
-    return res.status(405).json({ error: 'Method not allowed' });
-  }
-
+export async function POST(request) {
   try {
-    const { message } = req.body || {};
-    if (!message || typeof message !== 'string') {
-      return res.status(400).json({ error: 'Message is required' });
+    const body = await request.json();
+    const message = body.message || (body.messages && body.messages[body.messages.length - 1]?.content);
+
+    if (!message || typeof message !== 'string' || message.trim().length === 0) {
+      return NextResponse.json({ error: 'Valid message is required' }, { status: 400 });
     }
 
-    const geminiApiKey = process.env.GEMINI_API_KEY;
-    
-    if (!geminiApiKey) {
-      return res.status(200).json({ 
+    // الاعتماد حصرياً على مفاتيح IBM Bob
+    const ibmApiKey = process.env.IBM_BOB_APIKEY;
+    const projectId = process.env.IBM_BOB_PROJECT_ID;
+
+    if (!ibmApiKey) {
+      return NextResponse.json({ 
         success: true, 
-        reply: "⚠️ تنبيه: متغير GEMINI_API_KEY غير موجود في إعدادات Vercel." 
+        reply: "⚠️ تنبيه: مفتاح IBM_BOB_APIKEY غير موجود في إعدادات Vercel." 
       });
     }
 
-    const prompt = `You are MathCraft Assistant, an expert AI math tutor. Answer the student's question clearly step-by-step in Arabic or English based on the question language:\n\n${message.trim()}`;
-    
-    // تم تحديث الرابط إلى الإصدار المستقر v1 ليعمل النموذج بكفاءة تامة
-    const url = `https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key=${geminiApiKey}`;
-    
-    const response = await fetch(url, {
+    // رابط خادم IBM Bob
+    const targetUrl = 'https://bob.ibm.com/ml/v1/text/generation?version=2023-05-29';
+
+    const ibmRes = await fetch(targetUrl, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${ibmApiKey}`,
+      },
       body: JSON.stringify({
-        contents: [{ parts: [{ text: prompt }] }]
+        model_id: 'ibm/granite-3-8b-instruct',
+        input: `You are MathCraft Assistant, an expert AI math tutor. Answer clearly step-by-step:\n\n${message.trim()}`,
+        project_id: projectId || undefined,
+        parameters: {
+          max_new_tokens: 500,
+          temperature: 0.7,
+        },
       })
     });
 
-    const data = await response.json();
+    const data = await ibmRes.json();
 
-    if (!response.ok) {
-      const googleError = data.error?.message || JSON.stringify(data);
-      return res.status(200).json({ 
+    // تشخيص دقيق في حال رفض خادم IBM للطلب
+    if (!ibmRes.ok) {
+      const ibmError = data.error?.message || data.message || JSON.stringify(data);
+      return NextResponse.json({ 
         success: true, 
-        reply: `❌ خطأ من جوجل: ${googleError}` 
+        reply: `❌ رفض خادم IBM الطلب بالرسالة التالية:\n${ibmError}` 
       });
     }
 
-    const reply = data.candidates?.[0]?.content?.parts?.[0]?.text || "عذراً، لم أتمكن من استخراج الإجابة.";
+    // استخلاص الإجابة عند نجاح الاتصال
+    let reply = "عذراً، لم أتمكن من معالجة الطلب.";
+    if (data.results && data.results.length > 0) {
+      reply = data.results[0].generated_text;
+    } else if (data.generated_text) {
+      reply = data.generated_text;
+    }
 
-    return res.status(200).json({
+    return NextResponse.json({
       success: true,
       reply: reply.trim()
     });
 
   } catch (error) {
-    return res.status(200).json({ 
+    return NextResponse.json({ 
       success: true, 
-      reply: `❌ حدث استثناء في الخادم: ${error.message}` 
+      reply: `❌ حدث استثناء في الخادم أثناء الاتصال بـ IBM: ${error.message}` 
     });
   }
 }
