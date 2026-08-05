@@ -1,17 +1,11 @@
 {
   "name": "mathcraft",
   "version": "1.0.0",
-  "description": "MathCraft AI Assistant integrated with IBM watsonx for the IBM Bob Challenge",
   "private": true,
   "type": "module",
-  "author": "Reham Khedr",
-  "scripts": {
-    "dev": "vercel dev",
-    "build": "echo 'Ready for Vercel deployment'"
-  },
+  "scripts": {},
   "engines": {
     "node": ">=18.0.0"
   },
-  "dependencies": {},
-  "devDependencies": {}
+  "dependencies": {}
 }
