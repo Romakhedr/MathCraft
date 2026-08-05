@@ -57,7 +57,6 @@ To run this project locally, create a `.env` file in the root directory and add:
 ```env
 IBM_CLOUD_API_KEY=your_ibm_api_key
 WATSONX_PROJECT_ID=your_project_id
-GEMINI_API_KEY=your_gemini_fallback_key
 📝 About
 MathCraft aims to empower students worldwide by combining artificial intelligence with decentralized incentives, establishing a reliable, engaging, and efficient learning environment.
 
