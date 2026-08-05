@@ -25,6 +25,7 @@ export default async function handler(req, res) {
 
     // --- الاعتماد حصرياً على مفاتيح IBM Bob للمسابقة ---
     const ibmApiKey = process.env.IBM_BOB_APIKEY;
+    const IBMBob =process.env. IBMBob;
     const projectId = process.env.IBM_BOB_PROJECT_ID;
     
     if (!ibmApiKey) {
