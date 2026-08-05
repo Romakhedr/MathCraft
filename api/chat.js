@@ -1,5 +1,5 @@
 // ==============================================================================
-// 🎯 MathCraft AI Engine - Updated Stable Model Integration
+// 🎯 MathCraft AI Engine - IBM Bob Integration (Competition Ready)
 // ==============================================================================
 
 export default async function handler(req, res) {
@@ -23,39 +23,56 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: 'Message is required' });
     }
 
-    const geminiApiKey = process.env.GEMINI_API_KEY;
+    // --- الاعتماد حصرياً على مفاتيح IBM Bob للمسابقة ---
+    const ibmApiKey = process.env.IBM_BOB_APIKEY;
+    const projectId = process.env.IBM_BOB_PROJECT_ID;
     
-    if (!geminiApiKey) {
+    if (!ibmApiKey) {
       return res.status(200).json({ 
         success: true, 
-        reply: "⚠️ تنبيه: متغير GEMINI_API_KEY غير موجود في إعدادات Vercel." 
+        reply: "⚠️ تنبيه: مفتاح IBM_BOB_APIKEY غير موجود في إعدادات Vercel." 
       });
     }
 
-    const prompt = `You are MathCraft Assistant, an expert AI math tutor. Answer the student's question clearly step-by-step in Arabic or English based on the question language:\n\n${message.trim()}`;
+    const prompt = `You are MathCraft Assistant, an expert AI math tutor. Answer the student's question clearly step-by-step:\n\n${message.trim()}`;
     
-    // تم تحديث اسم النموذج إلى الإصدار القياسي المدعوم تماماً
-    const url = `https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key=${geminiApiKey}`;
+    // رابط خادم IBM
+    const targetUrl = 'https://bob.ibm.com/ml/v1/text/generation?version=2023-05-29';
     
-    const response = await fetch(url, {
+    const response = await fetch(targetUrl, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${ibmApiKey}`,
+      },
       body: JSON.stringify({
-        contents: [{ parts: [{ text: prompt }] }]
+        model_id: 'ibm/granite-3-8b-instruct', // أو أي نموذج تحدده مسابقة IBM
+        input: prompt,
+        project_id: projectId || undefined,
+        parameters: {
+          max_new_tokens: 500,
+          temperature: 0.7,
+        },
       })
     });
 
     const data = await response.json();
 
     if (!response.ok) {
-      const googleError = data.error?.message || JSON.stringify(data);
+      const ibmError = data.error?.message || data.message || JSON.stringify(data);
       return res.status(200).json({ 
         success: true, 
-        reply: `❌ خطأ من جوجل: ${googleError}` 
+        reply: `❌ رفض خادم IBM الطلب: ${ibmError}` 
       });
     }
 
-    const reply = data.candidates?.[0]?.content?.parts?.[0]?.text || "عذراً، لم أتمكن من استخراج الإجابة.";
+    let reply = "عذراً، لم أتمكن من استخراج الإجابة من خادم IBM.";
+    if (data.results && data.results.length > 0) {
+      reply = data.results[0].generated_text;
+    } else if (data.generated_text) {
+      reply = data.generated_text;
+    }
 
     return res.status(200).json({
       success: true,
@@ -65,7 +82,7 @@ export default async function handler(req, res) {
   } catch (error) {
     return res.status(200).json({ 
       success: true, 
-      reply: `❌ حدث استثناء في الخادم: ${error.message}` 
+      reply: `❌ حدث استثناء أثناء الاتصال بخادم IBM: ${error.message}` 
     });
   }
 }
