@@ -1,10 +1,7 @@
 <div align="center">
-
 <img src="logo.png" alt="MathCraft Logo" width="180"/>
-
 # MathCraft
 **AI-Powered Adaptive Learning & Web3 Gamified Math Platform**
-
 ![Version](https://img.shields.io/badge/version-1.0.0-blue?style=for-the-badge)
 ![License](https://img.shields.io/badge/license-MIT-green?style=for-the-badge)
 ![Build](https://img.shields.io/badge/build-passing-brightgreen?style=for-the-badge)
