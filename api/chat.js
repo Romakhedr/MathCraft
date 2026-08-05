@@ -1,89 +1,78 @@
-// ==============================================================================
-// 🎯 MathCraft AI Engine - IBM Bob Integration (Competition Ready)
-// ==============================================================================
-
 export default async function handler(req, res) {
-  const origin = req.headers.origin || '*';
-  res.setHeader('Access-Control-Allow-Origin', origin);
-  res.setHeader('Access-Control-Allow-Credentials', 'true');
-  res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS,POST');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-
-  if (req.method === 'OPTIONS') {
-    return res.status(200).end();
-  }
-
+  // 1. السماح بطلبات POST فقط وحماية المسار
   if (req.method !== 'POST') {
-    return res.status(405).json({ error: 'Method not allowed' });
+    return res.status(405).json({ error: 'Method Not Allowed' });
   }
 
   try {
-    const { message } = req.body || {};
-    if (!message || typeof message !== 'string') {
-      return res.status(400).json({ error: 'Message is required' });
-    }
-
-    // --- الاعتماد حصرياً على مفاتيح IBM Bob للمسابقة ---
-    const ibmApiKey = process.env.IBM_BOB_APIKEY;
-    const IBMBob =process.env. IBMBob;
+    const userMessage = req.body.message || req.body.prompt;
+    const apiKey = process.env.IBM_BOB_APIKEY;
     const projectId = process.env.IBM_BOB_PROJECT_ID;
-    
-    if (!ibmApiKey) {
-      return res.status(200).json({ 
-        success: true, 
-        reply: "⚠️ تنبيه: مفتاح IBM_BOB_APIKEY غير موجود في إعدادات Vercel." 
-      });
+    const url = process.env.WATSONX_URL || 'https://us-south.ml.cloud.ibm.com/ml/v1/text/generation?version=2023-05-29';
+
+    if (!apiKey || !projectId) {
+      console.error('[MathCraft] Missing IBM credentials in environment variables');
+      return res.status(500).json({ error: 'إعدادات اعتماد IBM غير مكتملة في بيئة الخادم.' });
     }
 
-    const prompt = `You are MathCraft Assistant, an expert AI math tutor. Answer the student's question clearly step-by-step:\n\n${message.trim()}`;
+    // 2. الخطوة الأولى: توليد توكن المصادقة (IAM Token) من خوادم IBM
+    const tokenResponse = await fetch('https://iam.cloud.ibm.com/identity/token', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+        'Accept': 'application/json'
+      },
+      body: new URLSearchParams({
+        grant_type: 'urn:ibm:params:oauth:grant-type:apikey',
+        apikey: apiKey
+      })
+    });
+
+    const tokenData = await tokenResponse.json();
     
-    // رابط خادم IBM
-    const targetUrl = 'https://bob.ibm.com/ml/v1/text/generation?version=2023-05-29';
-    
-    const response = await fetch(targetUrl, {
+    if (!tokenResponse.ok || !tokenData.access_token) {
+      console.error('[MathCraft] IBM Token Authentication Error:', tokenData);
+      return res.status(401).json({ error: 'فشل المصادقة مع خوادم IBM (خطأ 401). تحقق من صلاحية مفتاح API.' });
+    }
+
+    const accessToken = tokenData.access_token;
+
+    // 3. الخطوة الثانية: إرسال الطلب إلى نموذج IBM watsonx.ai
+    const aiResponse = await fetch(url, {
       method: 'POST',
       headers: {
         'Accept': 'application/json',
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${ibmApiKey}`,
+        'Authorization': `Bearer ${accessToken}`
       },
       body: JSON.stringify({
-        model_id: 'ibm/granite-3-8b-instruct', // أو أي نموذج تحدده مسابقة IBM
-        input: prompt,
-        project_id: projectId || undefined,
+        input: `أنت مساعد ذكي مخصص لتطبيق MathCraft التعليمي. قم بحل المسألة الرياضية التالية واشرحها بأسلوب مشجّع ومبسط للطالب: ${userMessage}`,
+        model_id: 'ibm/granite-3-8b-instruct',
+        project_id: projectId,
         parameters: {
+          decoding_method: 'greedy',
           max_new_tokens: 500,
-          temperature: 0.7,
-        },
+          min_new_tokens: 1,
+          repetition_penalty: 1.1
+        }
       })
     });
 
-    const data = await response.json();
+    const aiData = await aiResponse.json();
 
-    if (!response.ok) {
-      const ibmError = data.error?.message || data.message || JSON.stringify(data);
-      return res.status(200).json({ 
-        success: true, 
-        reply: `❌ رفض خادم IBM الطلب: ${ibmError}` 
-      });
+    if (!aiResponse.ok) {
+      console.error('[MathCraft] watsonx API Error:', aiData);
+      return res.status(aiResponse.status).json({ error: 'حدث استثناء أثناء معالجة البيانات داخل نموذج IBM.' });
     }
 
-    let reply = "عذراً، لم أتمكن من استخراج الإجابة من خادم IBM.";
-    if (data.results && data.results.length > 0) {
-      reply = data.results[0].generated_text;
-    } else if (data.generated_text) {
-      reply = data.generated_text;
-    }
+    // 4. استخلاص الإجابة وإرسالها للواجهة الأمامية بصيغة JSON آمنة
+    const reply = aiData.results && aiData.results[0] ? aiData.results[0].generated_text : 'عذراً، لم أتمكن من توليد إجابة واضحة للمسألة.';
 
-    return res.status(200).json({
-      success: true,
-      reply: reply.trim()
-    });
+    return res.status(200).json({ reply: reply.trim() });
 
   } catch (error) {
-    return res.status(200).json({ 
-      success: true, 
-      reply: `❌ حدث استثناء أثناء الاتصال بخادم IBM: ${error.message}` 
-    });
+    // 5. حماية شاملة تمنع إرجاع صفحات HTML وتضمن دائماً استجابة JSON
+    console.error('[MathCraft] Internal Server Catch Error:', error);
+    return res.status(500).json({ error: 'حدث خطأ داخلي في الخادم، يرجى المحاولة مرة أخرى.' });
   }
 }
