@@ -334,36 +334,44 @@
 </section>
 
 <section class="cta">
-  <div class="badge">🎓</div>
-  <h2>MathCraft isn't just a tool —<br><b>it's a learning companion.</b></h2>
-  <p>Thank you.</p>
+  <div class="container">
+    <div class="badge">∑</div>
+    <h2>Ready to transform how you learn math?<br><b>Join MathCraft today.</b></h2>
+    <p>Empowering students worldwide with decentralized intelligence and seamless tools.</p>
+  </div>
 </section>
 
-<button class="ai-fab" id="aiFab">💬<span class="dot"></span></button>
+<footer>
+  <p>&copy; 2026 MathCraft. Designed with Quiet Luxury. Built by Reham Hamdy Elsayed Khedr.</p>
+</footer>
+
+<!-- AI ASSISTANT WIDGET -->
+<button class="ai-fab" id="aiFab" title="Open MathCraft AI Assistant">
+  ✦
+  <span class="dot"></span>
+</button>
 <div class="ai-panel" id="aiPanel">
   <div class="ai-head">
-    <div class="ai-avatar">✦</div>
+    <div class="ai-avatar">AI</div>
     <div>
       <b>MathCraft Assistant</b>
-      <span>Answers any math question</span>
+      <span>Powered by IBM Bob</span>
     </div>
     <button class="ai-close" id="aiClose">✕</button>
   </div>
   <div class="ai-body" id="aiBody">
-    <div class="ai-msg bot">Hi! I'm the MathCraft AI assistant 👋 Ask me any math question — algebra, geometry, statistics, or anything else — and I'll explain it step by step.</div>
+    <div class="ai-msg bot">Hello! I am your MathCraft AI tutor. Ask me any math question or prompt!</div>
   </div>
   <div class="ai-quick" id="aiQuick">
-    <button data-q="Explain the Pythagorean theorem">Pythagorean theorem</button>
-    <button data-q="How do I solve a quadratic equation?">Quadratic equations</button>
-    <button data-q="What's the difference between mean and median?">Mean vs median</button>
+    <button data-q="Explain quadratic equations">Quadratic Equations</button>
+    <button data-q="How to calculate percentages?">Percentages</button>
+    <button data-q="What is calculus derivative?">Derivatives</button>
   </div>
   <div class="ai-input-row">
-    <input type="text" id="aiInput" placeholder="Type your math question...">
-    <button class="ai-send" id="aiSend">➤</button>
+    <input type="text" id="aiInput" placeholder="Ask a math question...">
+    <button class="ai-send" id="aiSend">➔</button>
   </div>
 </div>
-
-<footer>© 2026 MathCraft. All rights reserved.</footer>
 
 <script>
 document.getElementById('btnExplore').addEventListener('click', ()=>{
@@ -373,34 +381,33 @@ document.getElementById('btnQuiz').addEventListener('click', ()=>{
   document.getElementById('quiz').scrollIntoView({behavior:'smooth'});
 });
 
-const solveBtn = document.getElementById('solveBtn');
-solveBtn.addEventListener('click', ()=>{
-  solveBtn.disabled = true;
-  ['s1','s2','s3'].forEach((id,i)=>{
-    setTimeout(()=>{ document.getElementById(id).classList.add('show'); }, (i+1)*450);
-  });
-  setTimeout(()=>{
-    document.getElementById('eqAnswer').classList.add('show');
-    solveBtn.textContent = 'Solved ✓';
-  }, 1650);
+// Interactive Solver Demo
+document.getElementById('solveBtn').addEventListener('click', ()=>{
+  const s1 = document.getElementById('s1');
+  const s2 = document.getElementById('s2');
+  const s3 = document.getElementById('s3');
+  const ans = document.getElementById('eqAnswer');
+  
+  s1.classList.remove('show');
+  s2.classList.remove('show');
+  s3.classList.remove('show');
+  ans.classList.remove('show');
+
+  setTimeout(() => s1.classList.add('show'), 200);
+  setTimeout(() => s2.classList.add('show'), 800);
+  setTimeout(() => s3.classList.add('show'), 1400);
+  setTimeout(() => ans.classList.add('show'), 2000);
 });
 
+// Topics Data
 const topics = [
-  {ico:'🔢', name:'Basic Algebra', desc:'Variables, linear equations, and solving for the unknown step by step.'},
-  {ico:'📐', name:'Geometry', desc:'Shapes, areas, perimeters, and the relationships between angles.'},
-  {ico:'📊', name:'Statistics', desc:'Averages, probability, and reading data with confidence.'},
-  {ico:'∫', name:'Calculus', desc:'A visual introduction to limits, derivatives, and integrals.'},
-  {ico:'△', name:'Trigonometry', desc:'Sine, cosine, and tangent, and their practical applications.'},
-  {ico:'🧮', name:'Mental Math', desc:'Fast strategies for everyday arithmetic operations.'},
-  {ico:'📈', name:'Functions', desc:'Understanding the relationship between inputs and outputs through graphs.'},
-  {ico:'🔺', name:'Matrices', desc:'The basics of linear algebra and representing data in rows and columns.'},
-  {ico:'⚖️', name:'Inequalities', desc:'Comparing values and solving problems involving greater-than and less-than.'},
-  {ico:'🎲', name:'Probability', desc:'Measuring the chances of events happening in an intuitive, visual way.'},
-  {ico:'🔷', name:'Solid Geometry', desc:'Volumes and 3D shapes and their calculations.'},
-  {ico:'✳️', name:'Numbers & Ratios', desc:'Fractions, percentages, and proportion in everyday life.'},
+  {ico:'📐', name:'Algebra & Equations', desc:'Master linear equations, quadratic formulas, polynomials, and variable isolation techniques.'},
+  {ico:'📊', name:'Calculus Fundamentals', desc:'Understand limits, derivatives, integrals, and rates of change.'},
+  {ico:'📐', name:'Geometry & Trigonometry', desc:'Explore shapes, angles, theorems, and trigonometric functions with visual precision.'},
+  {ico:'📈', name:'Statistics & Probability', desc:'Analyze data distributions, variance, probability models, and statistical inference.'}
 ];
 const grid = document.getElementById('topicsGrid');
-topics.forEach(t=>{
+topics.forEach(t => {
   const el = document.createElement('div');
   el.className = 'topic-chip';
   el.innerHTML = `<div class="t-ico">${t.ico}</div><h4>${t.name}</h4><span>View overview</span>`;
@@ -416,14 +423,16 @@ document.getElementById('closeDetail').addEventListener('click', ()=>{
   document.getElementById('topicDetail').classList.remove('show');
 });
 
+// Quiz Data
 const questions = [
-  {q:'What is 7 × 8?', options:['54','56','64','48'], correct:1},
-  {q:'Solve for x: x + 9 = 15', options:['x = 5','x = 6','x = 7','x = 24'], correct:1},
-  {q:'What is the sum of the angles in a triangle?', options:['90°','180°','270°','360°'], correct:1},
-  {q:'What is 15% of 200?', options:['15','20','30','40'], correct:2},
-  {q:'What is the square root of 81?', options:['8','9','7','10'], correct:1},
+  {text:'What is 7 × 8?', options:['54','56','64','48'], correct:1},
+  {text:'Solve for x: x + 9 = 15', options:['x = 5','x = 6','x = 7','x = 24'], correct:1},
+  {text:'What is the sum of the angles in a triangle?', options:['90°','180°','270°','360°'], correct:1},
+  {text:'What is 15% of 200?', options:['15','20','30','40'], correct:2},
+  {text:'What is the square root of 81?', options:['8','9','7','10'], correct:1},
 ];
 let qIndex = 0, score = 0, answered = false;
+
 function renderQuestion(){
     answered = false;
     const q = questions[qIndex];
@@ -440,7 +449,8 @@ function renderQuestion(){
         b.addEventListener('click', ()=> selectAnswer(i, b));
         opWrap.appendChild(b);
     });
-    document.getElementById('nextBtn').style.display = 'none';
+    const nextBtn = document.getElementById('nextBtn');
+    nextBtn.classList.remove('active');
 }
 
 function selectAnswer(i, btn){
@@ -457,8 +467,9 @@ function selectAnswer(i, btn){
         if(allBtns[q.correct]) allBtns[q.correct].classList.add('correct');
     }
     document.getElementById('quizScoreLabel').textContent = `Score: ${score}`;
-    document.getElementById('nextBtn').style.display = 'block';
-  }
+    const nextBtn = document.getElementById('nextBtn');
+    nextBtn.classList.add('active');
+}
 
 document.getElementById('nextBtn').addEventListener('click', ()=>{
   if(!answered) return;
@@ -487,7 +498,7 @@ document.getElementById('restartBtn').addEventListener('click', ()=>{
 
 renderQuestion();
 
-/* ---------- AI Assistant (connected to Claude) ---------- */
+/* ---------- AI Assistant Widget Logic ---------- */
 const aiFab = document.getElementById('aiFab');
 const aiPanel = document.getElementById('aiPanel');
 const aiClose = document.getElementById('aiClose');
@@ -542,7 +553,6 @@ async function sendToAI(text){
   aiHistory.push({role:'user', content:text});
   addTyping();
 
-  // Uses your project's own /api/chat.js endpoint (Vercel serverless function)
   const AI_PROXY_URL = "/api/chat";
 
   try {
