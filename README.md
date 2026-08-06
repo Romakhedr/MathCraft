@@ -31,12 +31,15 @@ MathCraft is built on three core pillars:
 
 ---
 ## 🛠️ Tech Stack
+Frontend: HTML5, CSS3, JavaScript (ES6+), Web3.js / Ethers.js
 
-* **Frontend:** HTML5, CSS3, JavaScript (ES6+), Web3.js / Ethers.js
-* **Backend:** Vercel Serverless Functions (Node.js)
-* **AI Engine:** IBM watsonx AI / IBM Bob APIs (Granite Model)
-* **Blockchain:** Solidity, ERC-20 Smart Contract (OpenZeppelin)
-* **UI/UX Design:** Minimalist 'Quiet Luxury' Aesthetic
+Backend: Vercel Serverless Functions (Node.js)
+
+AI Engine: IBM Bob API (IBM SaaS Console / Trial Environment)
+
+Blockchain: Solidity, ERC-20 Smart Contract (OpenZeppelin)
+
+UI/UX Design: Minimalist 'Quiet Luxury' Aesthetic
 
 ---
 
@@ -53,12 +56,10 @@ MathCraft is built on three core pillars:
 ## ⚙️ Environment Setup
 
 To run this project locally, create a `.env` file in the root directory and add:
-
 ```env
-IBM_BOB_APIKEY=your_ibm_api_key
-IBMBob=yourIBMBobID
-IBM_BOB_PROJECT_ID=your_project_id
-WATSONX_URL= your 
+ IBMCloud=your_ibm_cloud_api_key
+mathcraftv2=your_mathcraft_v2_key
+mathcraft-backend=your_backend_key
 📝 About
 MathCraft aims to empower students worldwide by combining artificial intelligence with decentralized incentives, establishing a reliable, engaging, and efficient learning environment.
 
