@@ -531,6 +531,13 @@ function addMsg(role, text){
   div.textContent = text;
   aiBody.appendChild(div);
   aiBody.scrollTop = aiBody.scrollHeight;
+ renderMathInElement(div, {
+  delimiters: [
+    {left: '$$', right: '$$', display: true},
+    {left: '$', right: '$', display: false}
+  ],
+  throwOnError: false
+});
   return div;
 }
 
