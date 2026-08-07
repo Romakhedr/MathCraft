@@ -1,62 +1,64 @@
 export default async function handler(req, res) {
-  // إعدادات CORS للسماح بالاتصال من تطبيقات أخرى
-  res.setHeader('Access-Control-Allow-Credentials', true);
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS,PATCH,DELETE,POST,PUT');
-  res.setHeader(
-    'Access-Control-Allow-Headers',
-    'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Type, Content-Length, Authorization'
-  );
-
-  if (req.method === 'OPTIONS') {
-    return res.status(200).end();
+  // 1. السماح بطلبات POST فقط
+  if (req.method !== 'POST') {
+    return res.status(405).json({ error: 'Method Not Allowed. Please use POST.' });
   }
 
-  if (req.method !== 'POST') {
-    return res.status(405).json({ error: 'Method Not Allowed' });
+  // 2. استخراج رسالة المستخدم من الطلب
+  const { message } = req.body;
+  if (!message) {
+    return res.status(400).json({ error: 'Message is required in the request body.' });
   }
 
   try {
-    // جلب مفتاح المصادقة بدون شرطات ليتطابق مع Vercel
-    const apiKey = 
-      process.env.IBMBob || 
-      process.env.mathcraftv2 || 
-      process.env.mathcraftbackend || 
-      process.env.IBMCloud;
+    // 3. جلب متغيرات البيئة من Vercel
+    const apiKey = process.env.mathcraftbackend;
+    const baseUrl = process.env.IBMAPIURL;
 
-    // جلب الرابط من المتغير الجديد IBMAPIURL
-    const apiUrl = process.env.IBMAPIURL;
-
-    // التحقق من وجود الإعدادات
-    if (!apiKey) {
-      return res.status(500).json({ error: "API Key is missing in environment variables." });
-    }
-    if (!apiUrl) {
-      return res.status(500).json({ error: "IBMAPIURL is missing in environment variables." });
+    // التحقق من وجود المتغيرات لتجنب الأخطاء المفاجئة
+    if (!apiKey || !baseUrl) {
+      console.error("Configuration Error: mathcraftbackend or IBMAPIURL is missing in Vercel.");
+      return res.status(500).json({ error: "Server Configuration Error" });
     }
 
-    const { message } = req.body;
-    if (!message) {
-      return res.status(400).json({ error: "Message is required." });
-    }
+    // 4. بناء الرابط النهائي (ملاحظة: تأكدي من مسار الخدمة الخاص بـ IBM)
+    // قمنا بإضافة /api/v1/chat كمثال قياسي، يجب تغييره إذا كانت وثائق IBM تطلب مساراً آخر
+    const endpoint = `${baseUrl}/api/v1/chat`; 
 
-    // إرسال الطلب إلى خدمة IBM Bob
-    const response = await fetch(apiUrl, {
+    // 5. إرسال الطلب إلى خوادم IBM
+    const response = await fetch(endpoint, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${apiKey}`
+        // صيغة المصادقة القياسية (قد تحتاجين لتغيير Bearer إلى شيء آخر حسب وثائق IBM)
+        'Authorization': `Bearer ${apiKey}`, 
       },
-      body: JSON.stringify({ message })
+      body: JSON.stringify({
+        messages: [
+          { role: "system", content: "You are a helpful AI assistant for the MathCraft platform." },
+          { role: "user", content: message }
+        ]
+      }),
     });
 
-    const data = await response.json();
+    // 6. هندسة التقاط الأخطاء التي طلبتِها
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error("🔴 IBM API Error Details:", errorText);
+      console.error("🔴 Status Code:", response.status);
+      return res.status(response.status).json({ 
+        error: "API Request Failed", 
+        details: errorText 
+      });
+    }
 
-    // إرجاع النتيجة
+    // 7. في حال نجاح الطلب، يتم إرسال البيانات للواجهة
+    const data = await response.json();
     return res.status(200).json(data);
 
   } catch (error) {
-    console.error("Server Error:", error);
+    // التقاط أخطاء السيرفر أو انقطاع الاتصال
+    console.error("🔴 Internal Server Error:", error);
     return res.status(500).json({ 
       error: "Internal Server Error", 
       details: error.message 
