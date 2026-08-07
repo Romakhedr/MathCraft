@@ -3,9 +3,10 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: 'Method Not Allowed' });
   }
 
-  const { message } = req.body;
-  if (!message) {
-    return res.status(400).json({ error: 'Message is required' });
+  const { message, mode, studentAnswer, mathProblem } = req.body;
+  
+  if (!message && !studentAnswer) {
+    return res.status(400).json({ error: 'Message or student answer is required' });
   }
 
   try {
@@ -18,17 +19,24 @@ export default async function handler(req, res) {
 
     const endpoint = `${baseUrl}/api/v1/chat`; 
 
-    // تجربة الإرسال بالشكل المباشر أو عبر x-api-key إذا رفض النظام صيغة الـ Bearer
+    let systemPrompt = "You are MathCraft Copilot, an expert, encouraging AI math tutor that guides students step-by-step without just giving the final answer.";
+    let userContent = message;
+
+    if (mode === 'correct' || studentAnswer) {
+      systemPrompt = "You are MathCraft Corrector. Analyze the student's solution for the math problem, verify if it is mathematically correct, highlight any exact errors, and provide clear step-by-step correction and guidance.";
+      userContent = `Math Problem: ${mathProblem || "General Equation"}\nStudent's Answer/Attempt: ${studentAnswer || message}`;
+    }
+
     const response = await fetch(endpoint, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': apiKey, // إرسال المفتاح مباشرة بدون كلمة Bearer
+        'Authorization': apiKey,
       },
       body: JSON.stringify({
         messages: [
-          { role: "system", content: "You are a helpful AI assistant for MathCraft." },
-          { role: "user", content: message }
+          { role: "system", content: systemPrompt },
+          { role: "user", content: userContent }
         ]
       }),
     });
