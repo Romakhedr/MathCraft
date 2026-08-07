@@ -1,37 +1,29 @@
 export default async function handler(req, res) {
-  // 1. السماح بطلبات POST فقط
   if (req.method !== 'POST') {
-    return res.status(405).json({ error: 'Method Not Allowed. Please use POST.' });
+    return res.status(405).json({ error: 'Method Not Allowed' });
   }
 
-  // 2. استخراج رسالة المستخدم من الطلب
   const { message } = req.body;
   if (!message) {
-    return res.status(400).json({ error: 'Message is required in the request body.' });
+    return res.status(400).json({ error: 'Message is required' });
   }
 
   try {
-    // 3. جلب متغيرات البيئة من Vercel
     const apiKey = process.env.mathcraftbackend;
     const baseUrl = process.env.IBMAPIURL;
 
-    // التحقق من وجود المتغيرات لتجنب الأخطاء المفاجئة
     if (!apiKey || !baseUrl) {
-      console.error("Configuration Error: mathcraftbackend or IBMAPIURL is missing in Vercel.");
-      return res.status(500).json({ error: "Server Configuration Error" });
+      return res.status(500).json({ error: "Missing Environment Variables in Vercel" });
     }
 
-    // 4. بناء الرابط النهائي (ملاحظة: تأكدي من مسار الخدمة الخاص بـ IBM)
-    // قمنا بإضافة /api/v1/chat كمثال قياسي، يجب تغييره إذا كانت وثائق IBM تطلب مساراً آخر
     const endpoint = `${baseUrl}/api/v1/chat`; 
 
-    // 5. إرسال الطلب إلى خوادم IBM
     const response = await fetch(endpoint, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        // صيغة المصادقة القياسية (قد تحتاجين لتغيير Bearer إلى شيء آخر حسب وثائق IBM)
-        'Authorization': `Bearer ${apiKey}`, 
+        'Authorization': `Bearer ${apiKey}`,
+        'x-api-key': apiKey // دعم صيغة الترويسة البديلة الخاصة بـ IBM
       },
       body: JSON.stringify({
         messages: [
@@ -41,27 +33,20 @@ export default async function handler(req, res) {
       }),
     });
 
-    // 6. هندسة التقاط الأخطاء التي طلبتِها
     if (!response.ok) {
       const errorText = await response.text();
-      console.error("🔴 IBM API Error Details:", errorText);
-      console.error("🔴 Status Code:", response.status);
+      console.error("🔴 IBM API Auth Failed (401):", errorText);
       return res.status(response.status).json({ 
-        error: "API Request Failed", 
+        error: "Authentication Failed", 
         details: errorText 
       });
     }
 
-    // 7. في حال نجاح الطلب، يتم إرسال البيانات للواجهة
     const data = await response.json();
     return res.status(200).json(data);
 
   } catch (error) {
-    // التقاط أخطاء السيرفر أو انقطاع الاتصال
-    console.error("🔴 Internal Server Error:", error);
-    return res.status(500).json({ 
-      error: "Internal Server Error", 
-      details: error.message 
-    });
+    console.error("🔴 Internal Error:", error);
+    return res.status(500).json({ error: "Internal Server Error", details: error.message });
   }
 }
