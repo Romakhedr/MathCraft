@@ -9,7 +9,6 @@ export default async function handler(req, res) {
   }
 
   try {
-    // قراءة المفتاح من المتغير البيئي الجديد IBMBOBAPIKEY
     const apiKey = process.env.IBMBOBAPIKEY;
     const baseUrl = process.env.IBMAPIURL;
 
@@ -20,37 +19,14 @@ export default async function handler(req, res) {
       return res.status(500).json({ error: "Missing Environment Variables in Vercel" });
     }
 
-    // تبديل الـ API Key بـ JWT
-    const tokenResponse = await fetch('https://iam.cloud.ibm.com/identity/token', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
-        'Accept': 'application/json'
-      },
-      body: new URLSearchParams({
-        'grant_type': 'urn:ibm:params:oauth:grant-type:apikey',
-        'apikey': apiKey 
-      })
-    });
-
-    const tokenData = await tokenResponse.json();
-
-    if (!tokenResponse.ok) {
-      console.error("🔴 IAM Token Exchange Failed (Detailed):", JSON.stringify(tokenData));
-      return res.status(401).json({ 
-        error: "IBM IAM Authentication Failed", 
-        details: tokenData 
-      });
-    }
-
-    const jwtToken = tokenData.access_token;
     const endpoint = `${baseUrl}/api/v1/chat`; 
 
+    // إرسال الطلب مباشرة باستخدام مفتاح IBM SaaS كـ Bearer Token
     const response = await fetch(endpoint, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${jwtToken}`
+        'Authorization': `Bearer ${apiKey}`
       },
       body: JSON.stringify({
         messages: [
