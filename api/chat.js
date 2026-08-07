@@ -12,21 +12,18 @@ export default async function handler(req, res) {
     const apiKey = process.env.IBMBOBAPIKEY;
     const baseUrl = process.env.IBMAPIURL;
 
-    console.log("Debug: API Key present?", !!apiKey);
-    console.log("Debug: Base URL present?", !!baseUrl);
-
     if (!apiKey || !baseUrl) {
       return res.status(500).json({ error: "Missing Environment Variables in Vercel" });
     }
 
     const endpoint = `${baseUrl}/api/v1/chat`; 
 
-    // إرسال الطلب مباشرة باستخدام مفتاح IBM SaaS كـ Bearer Token
+    // تجربة الإرسال بالشكل المباشر أو عبر x-api-key إذا رفض النظام صيغة الـ Bearer
     const response = await fetch(endpoint, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${apiKey}`
+        'Authorization': apiKey, // إرسال المفتاح مباشرة بدون كلمة Bearer
       },
       body: JSON.stringify({
         messages: [
