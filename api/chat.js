@@ -9,14 +9,18 @@ export default async function handler(req, res) {
   }
 
   try {
-    const apiKey = process.env.mathcraftbackend;
+    // قراءة المفتاح من المتغير البيئي الجديد IBMBOBAPIKEY
+    const apiKey = process.env.IBMBOBAPIKEY;
     const baseUrl = process.env.IBMAPIURL;
+
+    console.log("Debug: API Key present?", !!apiKey);
+    console.log("Debug: Base URL present?", !!baseUrl);
 
     if (!apiKey || !baseUrl) {
       return res.status(500).json({ error: "Missing Environment Variables in Vercel" });
     }
 
-    // 1. تبديل الـ API Key بـ JWT Access Token من خادم توثيق IBM
+    // تبديل الـ API Key بـ JWT
     const tokenResponse = await fetch('https://iam.cloud.ibm.com/identity/token', {
       method: 'POST',
       headers: {
@@ -25,21 +29,20 @@ export default async function handler(req, res) {
       },
       body: new URLSearchParams({
         'grant_type': 'urn:ibm:params:oauth:grant-type:apikey',
-        'apikey': apiKey
+        'apikey': apiKey 
       })
     });
 
     const tokenData = await tokenResponse.json();
 
-    if (!tokenResponse.ok || !tokenData.access_token) {
-      console.error("🔴 IAM Token Exchange Failed:", tokenData);
+    if (!tokenResponse.ok) {
+      console.error("🔴 IAM Token Exchange Failed (Detailed):", JSON.stringify(tokenData));
       return res.status(401).json({ 
         error: "IBM IAM Authentication Failed", 
         details: tokenData 
       });
     }
 
-    // 2. استخدام الـ JWT Token الناتج لإرسال المحادثة إلى IBM Bob
     const jwtToken = tokenData.access_token;
     const endpoint = `${baseUrl}/api/v1/chat`; 
 
