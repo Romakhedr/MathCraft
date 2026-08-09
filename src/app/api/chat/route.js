@@ -9,24 +9,60 @@ export async function POST(request) {
       return NextResponse.json({ error: 'Valid message is required.' }, { status: 400 });
     }
 
-    // جلب المفتاح من متغيرات البيئة المحدثة في Vercel
-    const apiKey = process.env.IBMCloud || process.env.mathcraftv2 || process.env.IBMBob;
+    // جلب المفتاح والرابط من متغيرات البيئة المحدثة في Vercel
+    const apiKey = process.env.IBMBOBAPIKEY;
+    const baseUrl = process.env.IBMAPIURL;
 
-    if (!apiKey) {
+    if (!apiKey || !baseUrl) {
       return NextResponse.json({ 
-        error: 'API key could not be found in environment variables.' 
+        error: 'API key or Base URL could not be found in environment variables.' 
       }, { status: 400 });
     }
 
     // ---------------------------------------------------------
-    // منطقة الاتصال بخدمة IBM Bob باستخدام المتغيرات المحدثة
+    // منطقة الاتصال الفعلي بخدمة IBM Bob
     // ---------------------------------------------------------
+    const endpoint = `${baseUrl.replace(/\/$/, '')}/api/v1/chat`;
 
-    return NextResponse.json({ 
-      reply: `مرحباً بك في MathCraft! تم الاتصال بنجاح وتفعيل المساعد الرياضي.` 
+    const response = await fetch(endpoint, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        'Authorization': `Bearer ${apiKey}`,
+      },
+      body: JSON.stringify({
+        messages: [
+          { 
+            role: "system", 
+            content: "You are MathCraft Copilot, an expert, encouraging AI math tutor that guides students step-by-step." 
+          },
+          { 
+            role: "user", 
+            content: message 
+          }
+        ]
+      }),
     });
 
-  } qcatch (error) {
+    const responseText = await response.text();
+    let data;
+    try {
+      data = JSON.parse(responseText);
+    } catch (parseError) {
+      data = { rawResponse: responseText };
+    }
+
+    if (!response.ok) {
+      return NextResponse.json({ 
+        error: 'Upstream IBM Service Failed', 
+        details: data 
+      }, { status: response.status });
+    }
+
+    return NextResponse.json(data);
+
+  } catch (error) {
     return NextResponse.json({ 
       error: 'Internal Server Error', 
       details: error.message 
