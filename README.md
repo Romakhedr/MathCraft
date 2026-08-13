@@ -57,7 +57,6 @@ UI/UX Design: Minimalist 'Quiet Luxury' Aesthetic
 
 To run this project locally, create a `.env` file in the root directory and add:
 ```env
- IBMCloud=your_ibm_cloud_api_key
 mathcraftv2=your_mathcraft_v2_key
 mathcraft-backend=your_backend_key
 IBMBOBAPIKEY=your_ibm_bob_api_key
