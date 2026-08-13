@@ -1,1150 +1,610 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" dir="ltr">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>MathCraft — Learn Mathematics Differently</title>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,900&family=Fraunces:ital,opsz,wght@1,9..144,500&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;600&family=Tajawal:wght@400;500;700;800&family=Noto+Sans+SC:wght@400;500;700;900&family=Noto+Serif+SC:wght@600;900&family=Noto+Sans+Devanagari:wght@400;500;600;700&display=swap" rel="stylesheet">
-<style>
-  :root {
-    --navy: #17442B;
-    --chalk: #F5F2E7;
-    --yellow: #E5B433;
-    --coral: #D9573C;
-    --blue: #4C8F8A;
-    --green: #3FBE7D;
-    --mid: #234F34;
-    --muted: #93AC9E;
+<title>MathCraft — Where Numbers Become Your Language</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css" integrity="sha384-GvrOXfDBF51FivEtgB7B9nL+T78cQJjCqC5n7n45oW4zW77s2n19z3n316719b5b" crossorigin="anonymous">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js" integrity="sha384-cpW21h6RZv/phavutF+AuVYmu+dA8xd9zsbbFwLdaCgOTlDjuCZOBwT1C3J7C5yB" crossorigin="anonymous"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.auto-render.min.js"></script>
+  <style>
+  :root{
+    --ink:#0B2A1C;
+    --card-dark:#153B27;
+    --gold:#F2B632;
+    --gold-soft:#F8D27C;
+    --paper:#F6F5EF;
+    --paper-card:#FFFFFF;
+    --muted:#B8CFC0;
+    --muted-dark:#5B6E63;
+    --line:#22503A;
+    --danger:#D9784A;
+    --success:#3F8F5F;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html{scroll-behavior:smooth;}
+  body{font-family:'Inter', sans-serif; background:var(--paper); color:var(--ink); line-height:1.5; overflow-x:hidden;}
+  a{color:inherit; text-decoration:none;}
+  button{font-family:inherit; cursor:pointer; border:none;}
+  .container{max-width:1100px; margin:0 auto; padding:0 24px;}
+
+  header{position:sticky; top:0; z-index:50; background:rgba(11,42,28,0.92); backdrop-filter:blur(10px); border-bottom:1px solid rgba(255,255,255,0.06);}
+  .navwrap{display:flex; align-items:center; justify-content:space-between; padding:18px 24px; max-width:1100px; margin:0 auto;}
+  .logo{font-size:22px; font-weight:800; color:#fff; letter-spacing:-0.5px;}
+  .logo span{color:var(--gold);}
+  nav.links{display:flex; gap:28px; font-size:15px; color:var(--muted);}
+  nav.links a:hover{color:#fff;}
+  .btn-gold{background:var(--gold); color:var(--ink); font-weight:700; font-size:15px; padding:11px 22px; border-radius:10px; display:inline-flex; align-items:center; gap:8px; transition:transform .15s ease, box-shadow .15s ease;}
+  .btn-gold:hover{transform:translateY(-2px); box-shadow:0 8px 20px rgba(242,182,50,0.35);}
+  .btn-outline{border:1.5px solid rgba(255,255,255,0.35); color:#fff; font-weight:600; font-size:15px; padding:10px 22px; border-radius:10px; background:transparent; transition:background .15s ease, border-color .15s ease;}
+  .btn-outline:hover{background:rgba(255,255,255,0.08); border-color:#fff;}
+
+  .hero{background:radial-gradient(circle at 85% -10%, #1c4e33 0%, var(--ink) 55%), var(--ink); color:#fff; padding:90px 24px 70px; position:relative; overflow:hidden;}
+  .hero::before{content:"∑"; position:absolute; font-family:'Playfair Display',serif; font-size:340px; color:rgba(255,255,255,0.03); top:-90px; left:-40px; line-height:1;}
+  .hero::after{content:"π"; position:absolute; font-family:'Playfair Display',serif; font-size:220px; color:rgba(242,182,50,0.05); bottom:-60px; right:-20px; line-height:1;}
+  .hero-inner{max-width:780px; margin:0 auto; text-align:center; position:relative; z-index:2;}
+  .eyebrow{color:var(--gold-soft); font-size:13px; font-weight:700; letter-spacing:3px; margin-bottom:22px;}
+  .hero h1{font-family:'Playfair Display', serif; font-weight:700; font-size:clamp(38px, 7vw, 62px); line-height:1.25; margin-bottom:22px;}
+  .hero h1 em{color:var(--gold); font-style:italic;}
+  .hero p.lead{color:var(--muted); font-size:18px; max-width:520px; margin:0 auto 34px; line-height:1.7;}
+  .hero-ctas{display:flex; gap:14px; justify-content:center; flex-wrap:wrap; margin-bottom:56px;}
+  .hero-stats{display:flex; justify-content:center; gap:56px; flex-wrap:wrap;}
+  .hstat b{display:block; font-size:30px; color:#fff; font-weight:800;}
+  .hstat span{font-size:13px; color:var(--muted);}
+
+  section{padding:80px 24px;}
+  .section-tag{color:var(--success); font-size:13px; font-weight:700; letter-spacing:2.5px; margin-bottom:10px; display:block;}
+  .section-title{font-size:clamp(26px,4vw,36px); font-weight:800; margin-bottom:16px; color:var(--ink);}
+  .section-sub{color:var(--muted-dark); font-size:16px; max-width:600px; margin-bottom:44px;}
+  .light{background:var(--paper);}
+  .dark{background:var(--ink); color:#fff;}
+
+  .grid3{display:grid; grid-template-columns:repeat(3,1fr); gap:20px;}
+  .pcard{background:var(--paper-card); border:1px solid #E6E3D8; border-radius:16px; padding:26px;}
+  .pcard .ico{width:42px; height:42px; border-radius:10px; background:#FCEFE3; color:var(--danger); display:flex; align-items:center; justify-content:center; font-size:20px; margin-bottom:16px;}
+  .pcard h3{font-size:17px; font-weight:700; margin-bottom:8px;}
+  .pcard p{font-size:14px; color:var(--muted-dark); line-height:1.7;}
+
+  .solver-wrap{display:grid; grid-template-columns:1fr 1fr; gap:48px; align-items:center;}
+  .solver-copy p{color:var(--muted); font-size:16px; line-height:1.8; margin-top:14px;}
+  .solver-card{background:var(--card-dark); border-radius:18px; padding:28px; border:1px solid var(--line);}
+  .eq-display{font-family:'IBM Plex Mono', monospace; font-size:26px; text-align:center; color:#fff; margin-bottom:20px; background:rgba(0,0,0,0.2); padding:14px; border-radius:10px;}
+  .step{display:flex; gap:12px; align-items:flex-start; padding:10px 0; border-bottom:1px solid rgba(255,255,255,0.06); font-size:14px; color:var(--muted); opacity:0; transform:translateY(6px); transition:opacity .4s ease, transform .4s ease;}
+  .step.show{opacity:1; transform:translateY(0);}
+  .step .num{width:22px; height:22px; border-radius:50%; background:var(--gold); color:var(--ink); font-weight:800; font-size:12px; display:flex; align-items:center; justify-content:center; flex-shrink:0; margin-top:1px;}
+  .step b{color:#fff;}
+  .eq-answer{margin-top:16px; text-align:center; background:linear-gradient(90deg,var(--success),#2e7048); color:#fff; font-weight:800; font-size:18px; padding:12px; border-radius:10px; opacity:0; transition:opacity .4s ease;}
+  .eq-answer.show{opacity:1;}
+  .solve-btn{width:100%; background:var(--gold); color:var(--ink); font-weight:700; padding:12px; border-radius:10px; font-size:15px;}
+
+  .feat-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:20px;}
+  .fcard{background:var(--card-dark); border-radius:16px; padding:26px; border:1px solid var(--line);}
+  .fcard .ico{width:42px; height:42px; border-radius:10px; background:rgba(242,182,50,0.15); color:var(--gold); display:flex; align-items:center; justify-content:center; font-size:20px; margin-bottom:16px;}
+  .fcard h3{font-size:17px; font-weight:700; margin-bottom:8px; color:#fff;}
+  .fcard p{font-size:14px; color:var(--muted); line-height:1.7;}
+
+  .topics-grid{display:grid; grid-template-columns:repeat(4,1fr); gap:14px;}
+  .topic-chip{background:var(--paper-card); border:1px solid #E6E3D8; border-radius:14px; padding:18px; display:flex; flex-direction:column; gap:6px; cursor:pointer; transition:border-color .15s ease, transform .15s ease;}
+  .topic-chip:hover{border-color:var(--success); transform:translateY(-3px);}
+  .topic-chip .t-ico{font-size:22px;}
+  .topic-chip h4{font-size:14.5px; font-weight:700;}
+  .topic-chip span{font-size:12px; color:var(--muted-dark);}
+  .topic-detail{display:none; margin-top:26px; background:var(--paper-card); border:1px solid #E6E3D8; border-radius:16px; padding:24px;}
+  .topic-detail.show{display:block;}
+  .topic-detail h3{font-size:18px; margin-bottom:8px;}
+  .topic-detail p{color:var(--muted-dark); font-size:14.5px; line-height:1.8;}
+  .topic-detail .close{float:right; font-size:13px; color:var(--success); font-weight:700; cursor:pointer;}
+
+  .impact-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:20px;}
+  .istat{background:var(--paper-card); border:1px solid #E6E3D8; border-radius:16px; padding:30px 20px; text-align:center;}
+  .istat b{font-size:34px; font-weight:800; color:var(--ink); display:block; margin-bottom:6px;}
+  .istat span{font-size:13px; color:var(--muted-dark);}
+
+  .quiz-card{background:var(--card-dark); border-radius:20px; padding:34px; border:1px solid var(--line); max-width:640px; margin:0 auto;}
+  .quiz-top{display:flex; justify-content:space-between; align-items:center; margin-bottom:22px;}
+  .quiz-top span{font-size:13px; color:var(--muted);}
+  .progress-bar{height:6px; background:rgba(255,255,255,0.1); border-radius:4px; overflow:hidden; margin-bottom:26px;}
+  .progress-fill{height:100%; background:var(--gold); width:0%; transition:width .3s ease;}
+  .q-text{font-size:19px; font-weight:700; color:#fff; margin-bottom:22px; min-height:56px;}
+  .q-options{display:flex; flex-direction:column; gap:10px; margin-bottom:22px;}
+  .q-opt{background:rgba(255,255,255,0.05); border:1px solid var(--line); color:#fff; text-align:left; padding:14px 16px; border-radius:12px; font-size:15px; transition:background .15s ease, border-color .15s ease;}
+  .q-opt:hover{background:rgba(255,255,255,0.09);}
+  .q-opt.correct{background:rgba(63,143,95,0.25); border-color:var(--success);}
+  .q-opt.wrong{background:rgba(217,120,74,0.25); border-color:var(--danger);}
+  .q-opt:disabled{cursor:default;}
+  .quiz-footer{display:flex; justify-content:space-between; align-items:center;}
+  .quiz-next{background:var(--gold); color:var(--ink); font-weight:700; padding:11px 24px; border-radius:10px; font-size:14px; opacity:0.4; pointer-events:none;}
+  .quiz-next.active{opacity:1; pointer-events:auto;}
+  .quiz-result{display:none; text-align:center;}
+  .quiz-result.show{display:block;}
+  .quiz-result .score{font-size:48px; font-weight:800; color:var(--gold); margin-bottom:10px;}
+  .quiz-result p{color:var(--muted); margin-bottom:22px;}
+  .quiz-restart{background:var(--gold); color:var(--ink); font-weight:700; padding:12px 26px; border-radius:10px; font-size:15px;}
+
+  .cta{text-align:center; background:var(--ink); color:#fff; padding:90px 24px; position:relative; overflow:hidden;}
+  .cta .badge{width:70px; height:70px; border-radius:50%; background:rgba(242,182,50,0.15); color:var(--gold); display:flex; align-items:center; justify-content:center; font-size:30px; margin:0 auto 24px;}
+  .cta h2{font-family:'Playfair Display',serif; font-size:clamp(24px,4vw,32px); line-height:1.5; margin-bottom:6px;}
+  .cta h2 b{color:var(--gold);}
+  .cta p{color:var(--muted); margin-top:18px; font-size:14px;}
+
+  footer{background:var(--ink); border-top:1px solid var(--line); text-align:center; padding:24px; color:var(--muted); font-size:13px;}
+
+  /* ---------- AI ASSISTANT WIDGET ---------- */
+  .ai-fab{
+    position:fixed; bottom:24px; right:24px; z-index:200;
+    width:60px; height:60px; border-radius:50%; background:var(--gold); color:var(--ink);
+    display:flex; align-items:center; justify-content:center; font-size:26px;
+    box-shadow:0 10px 26px rgba(0,0,0,0.28); transition:transform .2s ease;
+  }
+  .ai-fab:hover{transform:scale(1.06);}
+  .ai-fab .dot{
+    position:absolute; top:2px; right:2px; width:12px; height:12px; border-radius:50%;
+    background:var(--success); border:2px solid var(--ink);
+  }
+  .ai-panel{
+    position:fixed; bottom:96px; right:24px; z-index:200; width:360px; max-width:calc(100vw - 32px);
+    height:520px; max-height:calc(100vh - 140px); background:var(--card-dark); border:1px solid var(--line);
+    border-radius:18px; display:none; flex-direction:column; overflow:hidden;
+    box-shadow:0 20px 50px rgba(0,0,0,0.4);
+  }
+  .ai-panel.open{display:flex;}
+  .ai-head{
+    background:var(--ink); padding:16px 18px; display:flex; align-items:center; gap:10px; border-bottom:1px solid var(--line);
+  }
+  .ai-head .ai-avatar{
+    width:34px; height:34px; border-radius:9px; background:rgba(242,182,50,0.18); color:var(--gold);
+    display:flex; align-items:center; justify-content:center; font-size:16px;
+  }
+  .ai-head b{color:#fff; font-size:14.5px; display:block;}
+  .ai-head span{color:var(--muted); font-size:11.5px;}
+  .ai-close{margin-left:auto; color:var(--muted); font-size:18px; cursor:pointer; background:none;}
+  .ai-body{flex:1; overflow-y:auto; padding:16px; display:flex; flex-direction:column; gap:12px;}
+  .ai-msg{max-width:85%; padding:10px 14px; border-radius:14px; font-size:13.5px; line-height:1.7;}
+  .ai-msg.bot{background:rgba(255,255,255,0.06); color:#EDEFEA; align-self:flex-start; border-bottom-left-radius:4px;}
+  .ai-msg.user{background:var(--gold); color:var(--ink); align-self:flex-end; border-bottom-right-radius:4px; font-weight:600;}
+  .ai-msg.typing{display:flex; gap:4px; align-items:center; background:rgba(255,255,255,0.06); align-self:flex-start;}
+  .ai-msg.typing span{width:6px; height:6px; border-radius:50%; background:var(--muted); animation:blink 1.2s infinite ease-in-out;}
+  .ai-msg.typing span:nth-child(2){animation-delay:.2s;}
+  .ai-msg.typing span:nth-child(3){animation-delay:.4s;}
+  @keyframes blink{0%,80%,100%{opacity:.25;} 40%{opacity:1;}}
+  .ai-quick{display:flex; gap:8px; flex-wrap:wrap; padding:0 16px 12px;}
+  .ai-quick button{
+    background:rgba(255,255,255,0.06); border:1px solid var(--line); color:var(--muted);
+    font-size:12px; padding:6px 12px; border-radius:20px;
+  }
+  .ai-quick button:hover{color:#fff; border-color:var(--gold);}
+  .ai-input-row{display:flex; gap:8px; padding:14px 16px; border-top:1px solid var(--line); background:var(--ink);}
+  .ai-input-row input{
+    flex:1; background:rgba(255,255,255,0.06); border:1px solid var(--line); color:#fff;
+    padding:11px 14px; border-radius:10px; font-size:13.5px; font-family:inherit;
+  }
+  .ai-input-row input::placeholder{color:var(--muted);}
+  .ai-send{
+    width:42px; height:42px; border-radius:10px; background:var(--gold); color:var(--ink);
+    display:flex; align-items:center; justify-content:center; font-size:16px; flex-shrink:0;
+  }
+  .ai-send:disabled{opacity:.5;}
+  @media(max-width:500px){
+    .ai-panel{right:16px; left:16px; width:auto; bottom:88px;}
+    .ai-fab{right:16px;}
   }
 
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-  html { scroll-behavior: smooth; }
-
-  body {
-    font-family: 'Inter', sans-serif;
-    background: var(--navy);
-    color: var(--chalk);
-    overflow-x: hidden;
-  }
-
-  /* ─── NOTEBOOK MARGIN RAIL (signature) ─── */
-  .margin-rail {
-    position: fixed; top: 0; left: 0; bottom: 0; width: 34px; z-index: 90;
-    pointer-events: none; display: flex; flex-direction: column; align-items: center;
-  }
-  .margin-rail::after {
-    content: ''; position: absolute; top: 0; bottom: 0; left: 26px; width: 1px;
-    background: rgba(217,87,60,0.4);
-  }
-  .margin-hole {
-    width: 9px; height: 9px; border-radius: 50%;
-    background: var(--navy);
-    box-shadow: inset 0 0 0 1px rgba(245,242,231,0.18);
-    position: sticky;
-  }
-  .margin-hole:nth-of-type(1) { top: 14vh; }
-  .margin-hole:nth-of-type(2) { top: 50vh; }
-  .margin-hole:nth-of-type(3) { top: 86vh; }
-  @media (max-width: 900px) { .margin-rail { display: none; } }
-  body { padding-left: 34px; }
-  @media (max-width: 900px) { body { padding-left: 0; } }
-  nav { left: 34px; }
-  @media (max-width: 900px) { nav { left: 0; } }
-
-  /* ─── NAV ─── */
-  nav {
-    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
-    display: flex; align-items: center; justify-content: space-between;
-    padding: 1rem 2.5rem;
-    background: rgba(17,37,27,0.85);
-    backdrop-filter: blur(12px);
-    border-bottom: 1px solid rgba(240,185,62,0.15);
-  }
-  .logo {
-    font-family: 'Fraunces', serif;
-    font-size: 1.5rem; font-weight: 900;
-    color: var(--yellow);
-    letter-spacing: -0.5px;
-  }
-  .logo span { color: var(--chalk); }
-  nav ul { display: flex; gap: 2rem; list-style: none; }
-  nav ul a {
-    color: var(--muted); text-decoration: none;
-    font-size: 0.875rem; font-weight: 500; letter-spacing: 0.02em;
-    transition: color 0.2s;
-  }
-  nav ul a:hover { color: var(--yellow); }
-  .nav-cta {
-    background: var(--yellow); color: var(--navy);
-    padding: 0.5rem 1.25rem; border-radius: 6px;
-    font-size: 0.875rem; font-weight: 600;
-    text-decoration: none; transition: opacity 0.2s;
-  }
-  .nav-cta:hover { opacity: 0.85; }
-
-  /* ─── HERO / CHALKBOARD ─── */
-  .hero {
-    min-height: 100vh;
-    display: flex; flex-direction: column; align-items: center; justify-content: center;
-    position: relative; overflow: hidden;
-    padding: 7rem 2rem 4rem;
-  }
-
-  .chalkboard {
-    position: absolute; inset: 0;
-    background: #1B3F29;
-    overflow: hidden;
-  }
-  .chalkboard::before {
-    content: '';
-    position: absolute; inset: 0;
-    background-image:
-      linear-gradient(rgba(76,143,138,0.07) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(76,143,138,0.07) 1px, transparent 1px);
-    background-size: 48px 48px;
-  }
-
-  /* Floating math symbols */
-  .float-symbols {
-    position: absolute; inset: 0; pointer-events: none;
-  }
-  .sym {
-    position: absolute;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 1.1rem; color: rgba(245,242,231,0.08);
-    animation: drift 20s infinite linear;
-  }
-
-  @keyframes drift {
-    0%   { transform: translateY(0) rotate(0deg); opacity: 0.06; }
-    50%  { opacity: 0.12; }
-    100% { transform: translateY(-120vh) rotate(360deg); opacity: 0; }
-  }
-
-  .hero-content { position: relative; z-index: 2; text-align: center; max-width: 780px; }
-
-  .compass-draw {
-    position: absolute; z-index: 1; top: 30%; left: 50%;
-    width: min(460px, 78vw); height: min(460px, 78vw);
-    transform: translate(-50%,-50%); pointer-events: none;
-  }
-  .compass-draw circle {
-    fill: none; stroke: rgba(240,185,62,0.35); stroke-width: 1;
-    stroke-dasharray: 1150; stroke-dashoffset: 1150;
-    animation: drawCircle 2.6s cubic-bezier(.65,0,.35,1) 0.3s forwards;
-  }
-  .compass-draw .pivot { fill: rgba(240,185,62,0.5); }
-  @keyframes drawCircle { to { stroke-dashoffset: 0; } }
-  @media (prefers-reduced-motion: reduce) {
-    .compass-draw circle { animation: none; stroke-dashoffset: 0; }
-  }
-
-  .eyebrow {
-    font-size: 0.75rem; font-weight: 600; letter-spacing: 0.15em;
-    color: var(--yellow); text-transform: uppercase; margin-bottom: 1.25rem;
-    display: inline-flex; align-items: center; gap: 0.5rem;
-  }
-  .eyebrow::before, .eyebrow::after {
-    content: ''; display: block; width: 24px; height: 1px; background: var(--yellow);
-  }
-
-  h1 {
-    font-family: 'Fraunces', serif;
-    font-size: clamp(2.5rem, 6vw, 4.5rem);
-    font-weight: 900; line-height: 1.05;
-    color: var(--chalk);
-    margin-bottom: 1.25rem;
-  }
-  h1 em { font-style: normal; color: var(--yellow); }
-
-  .hero-sub {
-    font-size: 1.1rem; color: var(--muted); max-width: 520px;
-    margin: 0 auto 2.5rem; line-height: 1.7;
-  }
-
-  .hero-btns { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
-  .btn-primary {
-    background: var(--yellow); color: var(--navy);
-    padding: 0.85rem 2rem; border-radius: 8px;
-    font-weight: 700; font-size: 0.95rem;
-    text-decoration: none; transition: transform 0.15s, opacity 0.15s;
-    display: inline-flex; align-items: center; gap: 0.5rem;
-    border: none; cursor: pointer;
-  }
-  .btn-primary:hover { transform: translateY(-2px); opacity: 0.9; }
-  .btn-secondary {
-    border: 1.5px solid rgba(255,255,255,0.25); color: var(--chalk);
-    padding: 0.85rem 2rem; border-radius: 8px;
-    font-weight: 500; font-size: 0.95rem;
-    text-decoration: none; transition: border-color 0.2s, color 0.2s;
-    display: inline-flex; align-items: center; gap: 0.5rem;
-  }
-  .btn-secondary:hover { border-color: var(--yellow); color: var(--yellow); }
-
-  /* Live equation strip */
-  .equation-strip {
-    position: relative; z-index: 2;
-    margin-top: 3.5rem;
-    background: rgba(255,255,255,0.05);
-    border: 1px solid rgba(240,185,62,0.2);
-    border-radius: 12px; padding: 1.25rem 2rem;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 1rem; color: var(--yellow);
-    display: flex; align-items: center; gap: 1rem;
-    max-width: 540px;
-    cursor: pointer;
-  }
-  .eq-label { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); white-space: nowrap; }
-  .eq-text { flex: 1; }
-  .eq-cursor {
-    display: inline-block; width: 2px; height: 1.1em;
-    background: var(--yellow); animation: blink 1s infinite;
-    vertical-align: middle; margin-left: 2px;
-  }
-  @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
-
-  /* stats row */
-  .stats-row {
-    position: relative; z-index: 2;
-    display: flex; gap: 2.5rem; margin-top: 2rem; flex-wrap: wrap; justify-content: center;
-  }
-  .stat { text-align: center; }
-  .stat-num {
-    font-family: 'Fraunces', serif;
-    font-size: 2rem; font-weight: 900; color: var(--chalk);
-  }
-  .stat-num span { color: var(--yellow); }
-  .stat-lbl { font-size: 0.75rem; color: var(--muted); margin-top: 0.15rem; letter-spacing: 0.04em; }
-
-  /* ─── SECTION WRAPPER ─── */
-  section { padding: 6rem 2rem; }
-  .inner { max-width: 1100px; margin: 0 auto; }
-
-  .sec-label {
-    font-size: 0.72rem; font-weight: 600; letter-spacing: 0.15em;
-    color: var(--yellow); text-transform: uppercase; margin-bottom: 0.75rem;
-  }
-  h2 {
-    font-family: 'Fraunces', serif;
-    font-size: clamp(1.75rem, 3.5vw, 2.75rem);
-    font-weight: 900; color: var(--chalk); line-height: 1.15;
-    margin-bottom: 1rem;
-  }
-  h2 em { font-style: normal; color: var(--yellow); }
-  .sec-desc { color: var(--muted); font-size: 1rem; line-height: 1.7; max-width: 520px; }
-
-  /* ─── AI SOLVER SECTION ─── */
-  #ai-solver { background: linear-gradient(180deg, var(--navy), #1D452C); }
-  .solver-wrap { display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; align-items: start; }
-  .solver-box {
-    background: var(--mid); border: 1px solid rgba(240,185,62,0.2);
-    border-radius: 16px; padding: 2rem; box-shadow: 0 10px 40px rgba(0,0,0,0.2);
-  }
-  .solver-input-group { position: relative; margin-bottom: 1.5rem; }
-  .solver-input {
-    width: 100%; background: var(--navy); border: 1px solid rgba(255,255,255,0.1);
-    border-radius: 10px; padding: 1.1rem 1.25rem; font-family: 'JetBrains Mono', monospace;
-    font-size: 1rem; color: var(--chalk); transition: border-color 0.2s; outline: none;
-  }
-  .solver-input:focus { border-color: var(--yellow); box-shadow: 0 0 10px rgba(240,185,62,0.1); }
-  .solver-suggestions { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-top: 0.75rem; }
-  .sol-tag {
-    background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.1);
-    color: var(--muted); font-size: 0.75rem; padding: 0.3rem 0.75rem; border-radius: 20px;
-    cursor: pointer; font-family: 'JetBrains Mono', monospace; transition: all 0.15s;
-  }
-  .sol-tag:hover { border-color: var(--yellow); color: var(--yellow); background: rgba(240,185,62,0.05); }
-  
-  .solution-display {
-    background: #12301F; border-radius: 12px; border-left: 4px solid var(--yellow);
-    padding: 1.5rem; min-height: 120px; display: none; margin-top: 1.5rem;
-  }
-  .sol-title { font-family: 'Fraunces', serif; color: var(--yellow); font-size: 1.1rem; margin-bottom: 0.75rem; font-weight: 700; }
-  .sol-steps { font-family: 'JetBrains Mono', monospace; font-size: 0.9rem; line-height: 1.7; color: var(--chalk); white-space: pre-line; }
-
-  /* ─── TOPICS ─── */
-  #topics { background: var(--mid); }
-  .topics-head { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 3rem; flex-wrap: wrap; gap: 1rem; }
-  .topics-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 1.25rem; }
-  .topic-card {
-    background: var(--navy); border: 1px solid rgba(255,255,255,0.07); border-radius: 14px;
-    padding: 1.75rem 1.5rem; cursor: pointer; transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s;
-    position: relative; overflow: hidden;
-  }
-  .topic-card:hover {
-    transform: translateY(-4px); border-color: var(--yellow); box-shadow: 0 8px 30px rgba(240,185,62,0.1);
-  }
-  .topic-card::after { content: attr(data-icon); position: absolute; right: 1rem; bottom: 0.75rem; font-size: 2.5rem; opacity: 0.08; }
-  .topic-icon { font-size: 1.75rem; margin-bottom: 1rem; }
-  .topic-name { font-family: 'Fraunces', serif; font-size: 1.1rem; font-weight: 700; color: var(--chalk); margin-bottom: 0.4rem; }
-  .topic-lessons { font-size: 0.78rem; color: var(--muted); }
-  .topic-bar { margin-top: 1rem; height: 3px; background: rgba(255,255,255,0.08); border-radius: 2px; }
-  .topic-fill { height: 100%; border-radius: 2px; background: var(--yellow); }
-
-  /* ─── INTERACTIVE QUIZ ─── */
-  #quiz { background: var(--navy); }
-  .quiz-wrap { display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; align-items: center; }
-  .quiz-left h2 { margin-bottom: 0.75rem; }
-  .quiz-left .sec-desc { margin-bottom: 2rem; }
-  .quiz-box { background: var(--mid); border: 1px solid rgba(255,255,255,0.08); border-radius: 16px; padding: 2rem; }
-  .quiz-meta { font-size: 0.72rem; color: var(--muted); letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 1.25rem; }
-  .quiz-question { font-family: 'Fraunces', serif; font-size: 1.35rem; font-weight: 700; color: var(--chalk); margin-bottom: 1.5rem; line-height: 1.4; }
-  .quiz-options { display: flex; flex-direction: column; gap: 0.6rem; }
-  .quiz-opt {
-    background: rgba(255,255,255,0.04); border: 1.5px solid rgba(255,255,255,0.1); border-radius: 10px;
-    padding: 0.9rem 1.1rem; font-family: 'JetBrains Mono', monospace; font-size: 0.9rem; color: var(--chalk);
-    cursor: pointer; transition: border-color 0.18s, background 0.18s, transform 0.12s; display: flex; align-items: center; gap: 0.75rem;
-  }
-  .quiz-opt:hover { border-color: var(--blue); transform: translateX(3px); }
-  .quiz-opt.correct { border-color: var(--green); background: rgba(63,190,125,0.12); color: var(--green); }
-  .quiz-opt.wrong { border-color: var(--coral); background: rgba(217,87,60,0.1); color: var(--coral); }
-  .opt-letter {
-    width: 26px; height: 26px; border-radius: 50%; background: rgba(255,255,255,0.07);
-    display: flex; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: 600; flex-shrink: 0;
-  }
-  .quiz-feedback { margin-top: 1.25rem; font-size: 0.9rem; min-height: 1.4em; font-weight: 500; transition: opacity 0.3s; }
-  .quiz-next {
-    margin-top: 1.25rem; width: 100%; background: var(--yellow); color: var(--navy); border: none;
-    border-radius: 8px; padding: 0.8rem; font-weight: 700; font-size: 0.9rem; cursor: pointer; display: none; transition: opacity 0.2s;
-  }
-  .quiz-next:hover { opacity: 0.85; }
-  .progress-bar { height: 4px; background: rgba(255,255,255,0.08); border-radius: 2px; margin-bottom: 0.5rem; }
-  .progress-fill { height: 100%; background: var(--yellow); border-radius: 2px; transition: width 0.4s ease; }
-  .progress-text { font-size: 0.72rem; color: var(--muted); }
-
-  /* ─── CALCULATOR ─── */
-  #calculator { background: var(--mid); }
-  .calc-wrap { display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; align-items: start; }
-  .calc-box { background: var(--navy); border-radius: 16px; border: 1px solid rgba(255,255,255,0.08); overflow: hidden; }
-  .calc-screen { background: #11291B; padding: 1.5rem 1.25rem; border-bottom: 1px solid rgba(255,255,255,0.06); }
-  .calc-expr { font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; color: var(--muted); min-height: 1.2em; }
-  .calc-result { font-family: 'JetBrains Mono', monospace; font-size: 2.5rem; font-weight: 600; color: var(--chalk); text-align: right; margin-top: 0.5rem; word-break: break-all; }
-  .calc-buttons { display: grid; grid-template-columns: repeat(4, 1fr); }
-  .calc-btn {
-    background: transparent; border: none; border-top: 1px solid rgba(255,255,255,0.05); border-right: 1px solid rgba(255,255,255,0.05);
-    color: var(--chalk); font-size: 1rem; padding: 1.1rem 0; cursor: pointer; font-family: 'JetBrains Mono', monospace; transition: background 0.15s;
-  }
-  .calc-btn:hover { background: rgba(255,255,255,0.07); }
-  .calc-btn.op { color: var(--yellow); }
-  .calc-btn.eq { background: var(--yellow); color: var(--navy); font-weight: 700; }
-  .calc-btn.eq:hover { background: #D9A93A; }
-  .calc-btn.clear { color: var(--coral); }
-
-  /* ─── FEATURES ─── */
-  #features { background: var(--navy); }
-  .features-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 1.5rem; margin-top: 3rem; }
-  .feat-card { border: 1px solid rgba(255,255,255,0.07); border-radius: 14px; padding: 2rem 1.75rem; transition: border-color 0.2s; }
-  .feat-card:hover { border-color: rgba(240,185,62,0.35); }
-  .feat-icon { font-size: 2rem; margin-bottom: 1rem; }
-  .feat-title { font-weight: 600; font-size: 1rem; margin-bottom: 0.5rem; color: var(--chalk); }
-  .feat-desc { font-size: 0.875rem; color: var(--muted); line-height: 1.65; }
-
-  /* ─── FORMULA LIBRARY ─── */
-  #formulas { background: var(--mid); }
-  .formula-tabs { display: flex; gap: 0.5rem; margin-bottom: 2rem; flex-wrap: wrap; }
-  .ftab {
-    background: transparent; border: 1.5px solid rgba(255,255,255,0.12); color: var(--muted);
-    padding: 0.45rem 1rem; border-radius: 6px; font-size: 0.8rem; font-weight: 500; cursor: pointer; transition: all 0.18s;
-  }
-  .ftab.active, .ftab:hover { border-color: var(--yellow); color: var(--yellow); background: rgba(240,185,62,0.07); }
-  .formula-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1rem; }
-  .formula-card { background: var(--navy); border-radius: 10px; border: 1px solid rgba(255,255,255,0.07); padding: 1.25rem 1.5rem; display: none; }
-  .formula-card.visible { display: block; }
-  .f-name { font-size: 0.8rem; color: var(--muted); margin-bottom: 0.5rem; text-transform: uppercase; letter-spacing: 0.06em; }
-  .f-expr { font-family: 'JetBrains Mono', monospace; font-size: 1.1rem; color: var(--yellow); margin-bottom: 0.5rem; }
-  .f-desc { font-size: 0.8rem; color: var(--muted); line-height: 1.5; }
-
-  /* ─── CTA ─── */
-  #cta { background: var(--navy); text-align: center; }
-  .cta-inner {
-    max-width: 640px; margin: 0 auto; border: 1px solid rgba(240,185,62,0.2); border-radius: 20px;
-    padding: 4rem 2.5rem; background: linear-gradient(135deg, rgba(240,185,62,0.06), rgba(76,143,138,0.06));
-  }
-  .cta-inner h2 { margin-bottom: 1rem; }
-  .cta-inner p { color: var(--muted); margin-bottom: 2rem; line-height: 1.7; }
-
-  /* ─── FOOTER ─── */
-  footer { background: #0D2116; border-top: 1px solid rgba(255,255,255,0.05); padding: 2.5rem 2rem; text-align: center; }
-  footer p { font-size: 0.8rem; color: var(--muted); }
-  footer strong { color: var(--yellow); }
-
-  /* ─── AI ASSISTANT FAB + PANEL ─── */
-  .assistant-fab {
-    position: fixed; bottom: 1.75rem; right: 1.75rem; z-index: 200;
-    width: 60px; height: 60px; border-radius: 50%;
-    background: var(--yellow); border: none; cursor: pointer;
-    display: flex; align-items: center; justify-content: center;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.35);
-    transition: transform 0.2s ease;
-  }
-  .assistant-fab:hover { transform: translateY(-3px); }
-  .assistant-fab svg { width: 24px; height: 24px; }
-  .assistant-fab svg path { fill: var(--navy); }
-  .assistant-fab .fab-dot {
-    position: absolute; top: 2px; right: 2px;
-    width: 13px; height: 13px; border-radius: 50%;
-    background: var(--green); border: 2.5px solid var(--navy);
-  }
-
-  .assistant-panel {
-    position: fixed; bottom: 6.25rem; right: 1.75rem; z-index: 200;
-    width: 350px; max-width: calc(100vw - 2.5rem);
-    height: 480px; max-height: calc(100vh - 9rem);
-    background: var(--mid); border: 1px solid rgba(255,255,255,0.08);
-    border-radius: 20px; box-shadow: 0 20px 60px rgba(0,0,0,0.45);
-    display: none; flex-direction: column; overflow: hidden;
-  }
-  .assistant-panel.open { display: flex; }
-
-  .assistant-head {
-    display: flex; align-items: center; gap: 0.75rem;
-    padding: 1.1rem 1.25rem; border-bottom: 1px solid rgba(255,255,255,0.08);
-    flex-shrink: 0;
-  }
-  .assistant-avatar {
-    width: 36px; height: 36px; border-radius: 9px; background: rgba(229,180,51,0.15);
-    color: var(--yellow); font-weight: 700; font-size: 0.8rem;
-    display: flex; align-items: center; justify-content: center; flex-shrink: 0;
-  }
-  .assistant-head-text { flex: 1; }
-  .assistant-title { font-family: 'Fraunces', serif; font-weight: 700; font-size: 1rem; color: var(--chalk); }
-  .assistant-sub { font-size: 0.72rem; color: var(--muted); margin-top: 0.1rem; }
-  .assistant-close {
-    background: none; border: none; color: var(--muted); font-size: 1.2rem;
-    cursor: pointer; padding: 0.25rem; line-height: 1; transition: color 0.15s;
-  }
-  .assistant-close:hover { color: var(--chalk); }
-
-  .assistant-messages {
-    flex: 1; overflow-y: auto; padding: 1.1rem 1.25rem;
-    display: flex; flex-direction: column; gap: 0.75rem;
-  }
-  .a-msg {
-    max-width: 85%; padding: 0.7rem 0.9rem; border-radius: 12px;
-    font-size: 0.85rem; line-height: 1.55; white-space: pre-line;
-  }
-  .a-msg.bot { background: rgba(255,255,255,0.06); color: var(--chalk); align-self: flex-start; border-bottom-left-radius: 3px; }
-  .a-msg.user { background: var(--yellow); color: var(--navy); align-self: flex-end; border-bottom-right-radius: 3px; font-weight: 500; }
-  .a-msg.bot.mono { font-family: 'JetBrains Mono', monospace; font-size: 0.78rem; }
-
-  .assistant-chips { display: flex; flex-wrap: wrap; gap: 0.5rem; padding: 0 1.25rem 0.9rem; flex-shrink: 0; }
-  .a-chip {
-    background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.12);
-    color: var(--muted); font-size: 0.72rem; padding: 0.4rem 0.75rem; border-radius: 20px;
-    cursor: pointer; transition: all 0.15s;
-  }
-  .a-chip:hover { border-color: var(--yellow); color: var(--yellow); }
-
-  .assistant-input-row {
-    display: flex; gap: 0.6rem; padding: 1rem 1.1rem;
-    border-top: 1px solid rgba(255,255,255,0.08); flex-shrink: 0;
-  }
-  .assistant-input {
-    flex: 1; background: var(--navy); border: 1px solid rgba(255,255,255,0.1);
-    border-radius: 10px; padding: 0.65rem 0.9rem; color: var(--chalk);
-    font-family: 'Inter', sans-serif; font-size: 0.85rem; outline: none;
-  }
-  .assistant-input:focus { border-color: var(--yellow); }
-  .assistant-send {
-    width: 40px; height: 40px; border-radius: 10px; border: none;
-    background: var(--yellow); color: var(--navy); cursor: pointer;
-    display: flex; align-items: center; justify-content: center; flex-shrink: 0;
-    transition: opacity 0.15s;
-  }
-  .assistant-send:hover { opacity: 0.85; }
-
-  @media (max-width: 480px) {
-    .assistant-panel { right: 1rem; bottom: 5.75rem; }
-    .assistant-fab { right: 1.25rem; bottom: 1.25rem; }
-  }
-
-  /* ─── LANGUAGE BAR ─── */
-  .lang-bar {
-    position: fixed; top: 0; left: 34px; right: 0; z-index: 110;
-    height: 34px; background: rgba(5,10,8,0.6); backdrop-filter: blur(8px);
-    border-bottom: 1px solid rgba(255,255,255,0.06);
-    display: flex; align-items: center; justify-content: flex-end; gap: 0.35rem; padding: 0 1.5rem;
-  }
-  .lang-btn {
-    background: transparent; border: 1px solid rgba(255,255,255,0.14); color: var(--muted);
-    font-size: 0.68rem; font-weight: 600; letter-spacing: 0.02em; padding: 0.22rem 0.65rem;
-    border-radius: 6px; cursor: pointer; transition: all 0.15s; font-family: 'Inter', sans-serif;
-  }
-  .lang-btn.active, .lang-btn:hover { border-color: var(--yellow); color: var(--yellow); background: rgba(229,180,51,0.08); }
-  @media (max-width: 900px) { .lang-bar { left: 0; } }
-
-  nav { top: 34px; }
-  .hero { padding-top: 8.75rem; }
-
-  /* ─── LANGUAGE-SPECIFIC TYPE ─── */
-  [data-lang="ar"] { font-family: 'Tajawal', sans-serif; }
-  [data-lang="ar"] h1, [data-lang="ar"] h2, [data-lang="ar"] .logo,
-  [data-lang="ar"] .btn-primary, [data-lang="ar"] .btn-secondary, [data-lang="ar"] .nav-cta { font-family: 'Tajawal', sans-serif; font-weight: 800; }
-  [data-lang="zh"] { font-family: 'Noto Sans SC', sans-serif; }
-  [data-lang="zh"] h1, [data-lang="zh"] h2 { font-family: 'Noto Serif SC', serif; }
-  [data-lang="hi"] { font-family: 'Noto Sans Devanagari', sans-serif; }
-  [data-lang="hi"] h1, [data-lang="hi"] h2 { font-family: 'Noto Sans Devanagari', sans-serif; font-weight: 700; }
-  html[dir="rtl"] .eq-cursor { margin-left: 0; margin-right: 2px; }
-  html[dir="rtl"] .quiz-opt:hover { transform: translateX(-3px); }
-
-  /* ─── RESPONSIVE ─── */
-  @media (max-width: 768px) {
-    nav ul { display: none; }
-    .quiz-wrap, .calc-wrap, .features-grid, .solver-wrap { grid-template-columns: 1fr; }
-    .topics-head { flex-direction: column; }
-    .lang-bar { justify-content: center; }
+  @media(max-width:860px){
+    nav.links{display:none;}
+    .grid3, .feat-grid, .impact-grid{grid-template-columns:1fr;}
+    .topics-grid{grid-template-columns:repeat(2,1fr);}
+    .solver-wrap{grid-template-columns:1fr;}
+    .hero-stats{gap:36px;}
   }
 </style>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js" integrity="sha384-+VBxd3r6XgURycqtZ117nYw44OOcIax56Z4dCRWbxyPt0Koah1uHoK0o4+/RRE05" crossorigin="anonymous"></script>
   <script>
     window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
   </script>
   <script defer src="/_vercel/insights/script.js"></script>
-  <script>
-    window.si = window.si || function () { (window.siq = window.siq || []).push(arguments); };
-  </script>
-  <script defer src="/_vercel/speed-insights/script.js"></script>
 </head>
 <body>
 
-<div class="margin-rail" aria-hidden="true">
-  <div class="margin-hole"></div>
-  <div class="margin-hole"></div>
-  <div class="margin-hole"></div>
-</div>
+<header>
+  <div class="navwrap">
+    <div class="logo">Math<span>Craft</span></div>
+    <nav class="links">
+      <a href="#problem">Problem</a>
+      <a href="#solution">Solution</a>
+      <a href="#features">Features</a>
+      <a href="#topics">Topics</a>
+      <a href="#quiz">Quiz</a>
+    </nav>
+    <a href="#quiz" class="btn-gold">Start Free →</a>
+  </div>
+</header>
 
-<div class="lang-bar" role="tablist" aria-label="Language selector">
-  <button class="lang-btn active" data-lang-btn="en" onclick="setLanguage('en')">EN</button>
-  <button class="lang-btn" data-lang-btn="ar" onclick="setLanguage('ar')">AR</button>
-  <button class="lang-btn" data-lang-btn="zh" onclick="setLanguage('zh')">中文</button>
-  <button class="lang-btn" data-lang-btn="hi" onclick="setLanguage('hi')">हिं</button>
-</div>
-
-<!-- NAV -->
-<nav>
-  <div class="logo">Math<span>Craft</span></div>
-  <ul>
-    <li><a href="#topics" data-i18n="nav_topics">Topics</a></li>
-    <li><a href="#ai-solver" data-i18n="nav_solver">AI Solver</a></li>
-    <li><a href="#quiz" data-i18n="nav_practice">Practice</a></li>
-    <li><a href="#calculator" data-i18n="nav_calc">Calculator</a></li>
-    <li><a href="#formulas" data-i18n="nav_formulas">Formulas</a></li>
-  </ul>
-  <a href="#cta" class="nav-cta" data-i18n="nav_cta">Start Free →</a>
-</nav>
-
-<!-- HERO -->
 <section class="hero">
-  <div class="chalkboard">
-    <div class="float-symbols" id="floatSymbols"></div>
-  </div>
-
-  <svg class="compass-draw" viewBox="0 0 200 200" aria-hidden="true">
-    <circle cx="100" cy="100" r="88"></circle>
-    <circle class="pivot" cx="100" cy="100" r="2.5"></circle>
-  </svg>
-
-  <div class="hero-content">
-    <span class="eyebrow">Mathematics Education</span>
-    <h1>Where numbers<br>become <em>your language</em></h1>
-    <p class="hero-sub">Master mathematics through visual explanations, instant practice, and step-by-step guidance — from arithmetic to calculus.</p>
-    <div class="hero-btns">
-      <a href="#ai-solver" class="btn-primary">Try AI Solver ✨</a>
-      <a href="#topics" class="btn-secondary">Explore Topics</a>
+  <div class="hero-inner">
+    <span class="eyebrow">— MATHEMATICS EDUCATION —</span>
+    <h1>Where numbers become <em>your</em><br>language</h1>
+    <p class="lead">Master mathematics through visual explanations, instant practice, and step-by-step guidance.</p>
+    <div class="hero-ctas">
+      <button class="btn-gold" id="btnExplore">Explore Topics →</button>
+      <button class="btn-outline" id="btnQuiz">Try a Quiz</button>
     </div>
-  </div>
-
-  <div class="equation-strip" id="eqStrip">
-    <span class="eq-label">Live&nbsp;Example</span>
-    <span class="eq-text" id="eqText"></span><span class="eq-cursor"></span>
-  </div>
-
-  <div class="stats-row">
-    <div class="stat">
-      <div class="stat-num">12<span>+</span></div>
-      <div class="stat-lbl">Math Topics</div>
-    </div>
-    <div class="stat">
-      <div class="stat-num">500<span>+</span></div>
-      <div class="stat-lbl">Practice Problems</div>
-    </div>
-    <div class="stat">
-      <div class="stat-num">100<span>%</span></div>
-      <div class="stat-lbl">Free to Use</div>
+    <div class="hero-stats">
+      <div class="hstat"><b>12+</b><span>Math Topics</span></div>
+      <div class="hstat"><b>500+</b><span>Practice Problems</span></div>
+      <div class="hstat"><b>100%</b><span>Free to Use</span></div>
     </div>
   </div>
 </section>
 
-<!-- AI PROBLEM SOLVER SECTION -->
-<section id="ai-solver">
-  <div class="inner">
+<section class="light" id="problem">
+  <div class="container">
+    <span class="section-tag">THE PROBLEM</span>
+    <h2 class="section-title">Why Traditional Math Learning Falls Short</h2>
+    <p class="section-sub">Traditional methods leave students memorizing instead of understanding.</p>
+    <div class="grid3">
+      <div class="pcard"><div class="ico">△</div><h3>Abstract Concepts</h3><p>Students struggle to grasp abstract mathematical ideas without concrete, visual context.</p></div>
+      <div class="pcard"><div class="ico">△</div><h3>Wasted Hours</h3><p>Hours spent on exercises without truly understanding the underlying steps.</p></div>
+      <div class="pcard"><div class="ico">△</div><h3>One-Size-Fits-All</h3><p>Traditional methods rarely accommodate diverse learning styles, causing frustration.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="dark" id="solution">
+  <div class="container">
+    <span class="section-tag" style="color:var(--gold-soft)">THE SOLUTION</span>
+    <h2 class="section-title" style="color:#fff">Meet MathCraft</h2>
     <div class="solver-wrap">
-      <div>
-        <div class="sec-label">AI Engine</div>
-        <h2>Step-by-Step <em>AI Solver</em></h2>
-        <p class="sec-desc">Type any algebraic or arithmetic problem down below. Our interactive engine instantly crafts a guided, deep-dive breakdown on your digital blackboard.</p>
-        <div style="display:flex; flex-direction:column; gap:0.75rem; margin-top:1.5rem;">
-          <div style="display:flex; align-items:center; gap:0.75rem; font-size:0.875rem; color:var(--muted)">
-            <span style="color:var(--yellow)">✨</span> Handles Algebraic equations like <code style="color:var(--chalk)">2x + 5 = 15</code>
-          </div>
-          <div style="display:flex; align-items:center; gap:0.75rem; font-size:0.875rem; color:var(--muted)">
-            <span style="color:var(--yellow)">✨</span> Breaks down Quadratic forms like <code style="color:var(--chalk)">x^2 - 5x + 6 = 0</code>
-          </div>
-          <div style="display:flex; align-items:center; gap:0.75rem; font-size:0.875rem; color:var(--muted)">
-            <span style="color:var(--yellow)">✨</span> Detailed logical execution paths
-          </div>
-        </div>
+      <div class="solver-copy">
+        <p>Every problem becomes an interactive experience. Enter your equation and watch the solution unfold step by step, with visual representations that make abstract concepts tangible and clear.</p>
       </div>
-      <div class="solver-box">
-        <div class="solver-input-group">
-          <input type="text" id="solverInput" class="solver-input" placeholder="Type your math equation here (e.g., 3x - 7 = 11)...">
-          <div class="solver-suggestions">
-            <span class="sol-tag" onclick="setSolverInput('4x + 12 = 32')">4x + 12 = 32</span>
-            <span class="sol-tag" onclick="setSolverInput('x^2 - 7x + 12 = 0')">x^2 - 7x + 12 = 0</span>
-            <span class="sol-tag" onclick="setSolverInput('sqrt(49) + 5 * 3')">sqrt(49) + 5 * 3</span>
-          </div>
+      <div class="solver-card">
+        <div class="eq-display" id="eqDisplay">2x + 5 = 17</div>
+        <button class="solve-btn" id="solveBtn">Solve step by step</button>
+        <div id="stepsWrap" style="margin-top:18px;">
+          <div class="step" id="s1"><div class="num">1</div><div>Subtract 5 from both sides → <b>2x = 12</b></div></div>
+          <div class="step" id="s2"><div class="num">2</div><div>Divide both sides by 2 → <b>x = 6</b></div></div>
+          <div class="step" id="s3"><div class="num">3</div><div>Verify: 2(6) + 5 = 17 ✓</div></div>
         </div>
-        <button class="btn-primary" style="width:100%; justify-content:center;" onclick="executeAISolver()">Analyze & Solve Problem →</button>
-        
-        <div id="solutionDisplay" class="solution-display">
-          <div class="sol-title">📋 Mathematical Breakdown:</div>
-          <div id="solSteps" class="sol-steps"></div>
-        </div>
+        <div class="eq-answer" id="eqAnswer">x = 6</div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- TOPICS -->
-<section id="topics">
-  <div class="inner">
-    <div class="topics-head">
-      <div>
-        <div class="sec-label">Curriculum</div>
-        <h2>Choose your <em>topic</em></h2>
-        <p class="sec-desc">Structured paths from foundations to advanced concepts, each with guided lessons and exercises.</p>
-      </div>
+<section class="dark" id="features">
+  <div class="container">
+    <span class="section-tag" style="color:var(--gold-soft)">KEY FEATURES</span>
+    <h2 class="section-title" style="color:#fff">Three Core Pillars</h2>
+    <div class="feat-grid">
+      <div class="fcard"><div class="ico">✦</div><h3>AI-Powered Assistant</h3><p>Explains mistakes in real time, guiding students to the correct approach instantly.</p></div>
+      <div class="fcard"><div class="ico">▤</div><h3>Progress Dashboard</h3><p>Tracks each student's performance with precision, highlighting strengths and gaps.</p></div>
+      <div class="fcard"><div class="ico">◈</div><h3>Adaptive Exercises</h3><p>Automatically adjusts difficulty to match each student's individual level.</p></div>
     </div>
+  </div>
+</section>
+
+<section class="light" id="topics">
+  <div class="container">
+    <span class="section-tag">EXPLORE</span>
+    <h2 class="section-title">Pick Your Topic</h2>
+    <p class="section-sub">Tap any topic to see a quick overview.</p>
     <div class="topics-grid" id="topicsGrid"></div>
-  </div>
-</section>
-
-<!-- QUIZ -->
-<section id="quiz">
-  <div class="inner">
-    <div class="quiz-wrap">
-      <div class="quiz-left">
-        <div class="sec-label">Practice</div>
-        <h2>Test your <em>knowledge</em></h2>
-        <p class="sec-desc">Instant feedback on every answer. Learn from mistakes, reinforce what you know. New questions every session.</p>
-        <a href="#topics" class="btn-primary" style="display:inline-flex">Browse All Topics →</a>
-      </div>
-      <div class="quiz-box">
-        <div class="progress-bar"><div class="progress-fill" id="quizProgress" style="width:0%"></div></div>
-        <div class="progress-text" id="quizProgressText">Question 1 of 5</div>
-        <div class="quiz-meta" style="margin-top:1rem" id="quizMeta">Algebra · Beginner</div>
-        <div class="quiz-question" id="quizQ">Loading...</div>
-        <div class="quiz-options" id="quizOpts"></div>
-        <div class="quiz-feedback" id="quizFb"></div>
-        <button class="quiz-next" id="quizNext" onclick="nextQuestion()">Next Question →</button>
-      </div>
+    <div class="topic-detail" id="topicDetail">
+      <span class="close" id="closeDetail">✕ Close</span>
+      <h3 id="detailTitle"></h3>
+      <p id="detailBody"></p>
     </div>
   </div>
 </section>
 
-<!-- CALCULATOR -->
-<section id="calculator">
-  <div class="inner">
-    <div class="calc-wrap">
-      <div>
-        <div class="sec-label">Tool</div>
-        <h2>Scientific <em>Calculator</em></h2>
-        <p class="sec-desc" style="margin-bottom:1.5rem">A full-featured calculator right in your browser. No app needed — compute as you learn.</p>
-        <div style="display:flex; flex-direction:column; gap:0.75rem; margin-top:1rem;">
-          <div style="display:flex; align-items:center; gap:0.75rem; font-size:0.875rem; color:var(--muted)">
-            <span style="color:var(--green)">✓</span> Keyboard input supported
-          </div>
-          <div style="display:flex; align-items:center; gap:0.75rem; font-size:0.875rem; color:var(--muted)">
-            <span style="color:var(--green)">✓</span> Live expression preview
-          </div>
-          <div style="display:flex; align-items:center; gap:0.75rem; font-size:0.875rem; color:var(--muted)">
-            <span style="color:var(--green)">✓</span> Handles decimals & parentheses
-          </div>
+<section class="light">
+  <div class="container">
+    <span class="section-tag">IMPACT</span>
+    <h2 class="section-title">Early Results Speak for Themselves</h2>
+    <p class="section-sub">In our early trials, we observed a significant improvement in students' understanding and confidence when tackling mathematical problems.</p>
+    <div class="impact-grid">
+      <div class="istat"><b>+38%</b><span>Problem-Solving Accuracy</span></div>
+      <div class="istat"><b>+45%</b><span>Student Confidence</span></div>
+      <div class="istat"><b>2.4x</b><span>Faster Concept Mastery</span></div>
+    </div>
+  </div>
+</section>
+
+<section class="dark" id="quiz">
+  <div class="container">
+    <span class="section-tag" style="color:var(--gold-soft); text-align:center; display:block;">TRY IT YOURSELF</span>
+    <h2 class="section-title" style="color:#fff; text-align:center;">Quick Quiz</h2>
+    <p class="section-sub" style="margin:0 auto 44px; text-align:center;">Five questions to test your fundamentals.</p>
+
+    <div class="quiz-card">
+      <div id="quizActive">
+        <div class="quiz-top">
+          <span id="quizProgressLabel">Question 1 of 5</span>
+          <span id="quizScoreLabel">Score: 0</span>
+        </div>
+        <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+        <div class="q-text" id="qText"></div>
+        <div class="q-options" id="qOptions"></div>
+        <div class="quiz-footer">
+          <span></span>
+          <button class="quiz-next" id="nextBtn">Next Question →</button>
         </div>
       </div>
-      <div class="calc-box">
-        <div class="calc-screen">
-          <div class="calc-expr" id="calcExpr">&nbsp;</div>
-          <div class="calc-result" id="calcResult">0</div>
-        </div>
-        <div class="calc-buttons" id="calcButtons"></div>
+      <div class="quiz-result" id="quizResult">
+        <div class="score" id="finalScore"></div>
+        <p id="resultMsg"></p>
+        <button class="quiz-restart" id="restartBtn">Try Again</button>
       </div>
     </div>
   </div>
 </section>
 
-<!-- FEATURES -->
-<section id="features">
-  <div class="inner">
-    <div class="sec-label">Why MathCraft</div>
-    <h2>Built for <em>real learning</em></h2>
-    <div class="features-grid">
-      <div class="feat-card">
-        <div class="feat-icon">📐</div>
-        <div class="feat-title">Visual Explanations</div>
-        <div class="feat-desc">Diagrams, graphs, and step-by-step breakdowns that make abstract concepts click instantly.</div>
-      </div>
-      <div class="feat-card">
-        <div class="feat-icon">⚡</div>
-        <div class="feat-title">Instant Feedback</div>
-        <div class="feat-desc">Know right away if you're correct — and understand why. Every wrong answer is a learning opportunity.</div>
-      </div>
-      <div class="feat-card">
-        <div class="feat-icon">🧮</div>
-        <div class="feat-title">Built-in Tools</div>
-        <div class="feat-desc">Calculator, formula library, and equation solver — everything you need without leaving the page.</div>
-      </div>
-      <div class="feat-card">
-        <div class="feat-icon">CTA</div>
-        <div class="feat-title">Adaptive Practice</div>
-        <div class="feat-desc">Questions match your level. Build confidence gradually, with increasing challenge as you improve.</div>
-      </div>
-      <div class="feat-card">
-        <div class="feat-icon">📚</div>
-        <div class="feat-title">Formula Library</div>
-        <div class="feat-desc">Every essential formula, organized by topic. Quick reference when you need it, deep study when you want it.</div>
-      </div>
-      <div class="feat-card">
-        <div class="feat-icon">🌐</div>
-        <div class="feat-title">100% Free</div>
-        <div class="feat-desc">No subscriptions, no paywalls, no ads. Quality math education should be accessible to everyone.</div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- FORMULAS -->
-<section id="formulas">
-  <div class="inner">
-    <div class="sec-label">Reference</div>
-    <h2>Formula <em>Library</em></h2>
-    <p class="sec-desc" style="margin-bottom:2rem">Quick access to the formulas you need most. Filter by topic.</p>
-    <div class="formula-tabs" id="formulaTabs"></div>
-    <div class="formula-grid" id="formulaGrid"></div>
-  </div>
-</section>
-
-<!-- CTA -->
-<section id="cta">
-  <div class="inner">
-    <div class="cta-inner">
-      <div class="sec-label">Get Started</div>
-      <h2>Ready to <em>master</em> math?</h2>
-      <p>Join thousands of students who turned math from a challenge into a strength. No account needed — start right now.</p>
-      <a href="#topics" class="btn-primary" style="font-size:1rem; padding:1rem 2.5rem">Start Learning →</a>
-    </div>
+<section class="cta">
+  <div class="container">
+    <div class="badge">∑</div>
+    <h2>Ready to transform how you learn math?<br><b>Join MathCraft today.</b></h2>
+    <p>Empowering students worldwide with decentralized intelligence and seamless tools.</p>
   </div>
 </section>
 
 <footer>
-  <p>© 2026 MathCraft. Designed with Quiet Luxury.<br>Built by Reham Hamdy Elsayed Khedr.</p>
+  <p>&copy; 2026 MathCraft. Designed with Quiet Luxury. Built by Reham Hamdy Elsayed Khedr.</p>
 </footer>
 
-<!-- AI ASSISTANT -->
-<button class="assistant-fab" id="assistantFab" onclick="toggleAssistant()" aria-label="Open MathCraft Assistant">
-  <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <path d="M12 2L14 9.5L21.5 12L14 14.5L12 22L10 14.5L2.5 12L10 9.5L12 2Z" fill="#0F1B2D"/>
-  </svg>
-  <span class="fab-dot"></span>
+<!-- AI ASSISTANT WIDGET -->
+<button class="ai-fab" id="aiFab" title="Open MathCraft AI Assistant">
+  ✦
+  <span class="dot"></span>
 </button>
-
-<div class="assistant-panel" id="assistantPanel">
-  <div class="assistant-head">
-    <div class="assistant-avatar">AI</div>
-    <div class="assistant-head-text">
-      <div class="assistant-title">MathCraft Assistant</div>
-      <div class="assistant-sub">Your AI math tutor</div>
+<div class="ai-panel" id="aiPanel">
+  <div class="ai-head">
+    <div class="ai-avatar">AI</div>
+    <div>
+      <b>MathCraft Assistant</b>
+      <span>Powered by IBM Bob</span>
     </div>
-    <button class="assistant-close" onclick="toggleAssistant()" aria-label="Close">✕</button>
+    <button class="ai-close" id="aiClose">✕</button>
   </div>
-  <div class="assistant-messages" id="assistantMessages">
-    <div class="a-msg bot">Hello! I'm your MathCraft AI tutor. Ask me any math question, or type an equation like <strong>2x + 5 = 15</strong>.</div>
+  <div class="ai-body" id="aiBody">
+    <div class="ai-msg bot">Hello! I am your MathCraft AI tutor. Ask me any math question or prompt!</div>
   </div>
-  <div class="assistant-chips">
-    <span class="a-chip" onclick="assistantQuick('x^2 - 5x + 6 = 0')">Quadratic Equations</span>
-    <span class="a-chip" onclick="assistantQuick('15% of 240')">Percentages</span>
-    <span class="a-chip" onclick="assistantQuick('sqrt(81) + 4 * 3')">Quick Arithmetic</span>
+  <div class="ai-quick" id="aiQuick">
+    <button data-q="Explain quadratic equations">Quadratic Equations</button>
+    <button data-q="How to calculate percentages?">Percentages</button>
+    <button data-q="What is calculus derivative?">Derivatives</button>
   </div>
-  <div class="assistant-input-row">
-    <input type="text" id="assistantInput" class="assistant-input" placeholder="Ask a math question..." onkeydown="if(event.key==='Enter') sendAssistantMessage()">
-    <button class="assistant-send" onclick="sendAssistantMessage()" aria-label="Send">→</button>
+  <div class="ai-input-row">
+    <input type="text" id="aiInput" placeholder="Ask a math question...">
+    <button class="ai-send" id="aiSend">➔</button>
   </div>
 </div>
 
 <script>
-// ─── FLOATING SYMBOLS ───
-const symbols = ['∑','∫','π','∞','√','≈','≠','≤','≥','∂','Δ','∇','θ','λ','α','β','γ','φ','ω','∈','∀','∃','⊂','±'];
-const container = document.getElementById('floatSymbols');
-for (let i = 0; i < 40; i++) {
-  const el = document.createElement('div');
-  el.className = 'sym';
-  el.textContent = symbols[Math.floor(Math.random() * symbols.length)];
-  el.style.left = Math.random() * 100 + '%';
-  el.style.top = Math.random() * 100 + '%';
-  el.style.animationDelay = (Math.random() * 20) + 's';
-  el.style.animationDuration = (15 + Math.random() * 20) + 's';
-  el.style.fontSize = (0.7 + Math.random() * 1.5) + 'rem';
-  container.appendChild(el);
-}
+document.getElementById('btnExplore').addEventListener('click', ()=>{
+  document.getElementById('topics').scrollIntoView({behavior:'smooth'});
+});
+document.getElementById('btnQuiz').addEventListener('click', ()=>{
+  document.getElementById('quiz').scrollIntoView({behavior:'smooth'});
+});
 
-// ─── EQUATION TYPEWRITER ───
-const equations = [
-  'E = mc²  →  energy is mass × speed of light²',
-  'a² + b² = c²  →  Pythagorean theorem',
-  'f\'(x) = lim(h→0) [f(x+h) - f(x)] / h',
-  '∫₀^∞ e^(-x²) dx = √π / 2',
-  'sin²θ + cos²θ = 1  →  Pythagorean identity',
-];
-let eqIdx = 0, charIdx = 0, deleting = false;
-const eqEl = document.getElementById('eqText');
-function typeEq() {
-  const eq = equations[eqIdx];
-  if (!deleting) {
-    eqEl.textContent = eq.slice(0, ++charIdx);
-    if (charIdx === eq.length) { deleting = true; setTimeout(typeEq, 2000); return; }
-  } else {
-    eqEl.textContent = eq.slice(0, --charIdx);
-    if (charIdx === 0) { deleting = false; eqIdx = (eqIdx + 1) % equations.length; }
-  }
-  setTimeout(typeEq, deleting ? 25 : 55);
-}
-typeEq();
-
-// ─── AI SOLVER LOGIC ───
-function setSolverInput(val) {
-  document.getElementById('solverInput').value = val;
-}
-
-function executeAISolver() {
-  const query = document.getElementById('solverInput').value.trim();
-  const display = document.getElementById('solutionDisplay');
-  const target = document.getElementById('solSteps');
+// Interactive Solver Demo
+document.getElementById('solveBtn').addEventListener('click', ()=>{
+  const s1 = document.getElementById('s1');
+  const s2 = document.getElementById('s2');
+  const s3 = document.getElementById('s3');
+  const ans = document.getElementById('eqAnswer');
   
-  if(!query) {
-    alert("Please enter a mathematical expression or equation first!");
-    return;
-  }
-  
-  display.style.display = 'block';
-  target.textContent = "Analyzing input parameters...\nGenerative layout tracing initiated...";
-  
-  // Simulated AI response timeout for immersion
-  setTimeout(() => {
-    target.textContent = generateStepByStepSolution(query);
-  }, 600);
-}
+  s1.classList.remove('show');
+  s2.classList.remove('show');
+  s3.classList.remove('show');
+  ans.classList.remove('show');
 
-function generateStepByStepSolution(input) {
-  // Clean inputs for standard tracking
-  let cleanInput = input.replace(/\s+/g, '');
-  
-  // Pattern 1: Linear Equations (e.g., 2x + 5 = 15 or 3x - 7 = 11)
-  const linearMatch = cleanInput.match(/^([+-]?\d*)x([+-]\d+)=([+-]?\d+)$/);
-  if(linearMatch) {
-    let coeffStr = linearMatch[1];
-    let coeff = coeffStr === '' ? 1 : (coeffStr === '+' ? 1 : (coeffStr === '-' ? -1 : parseInt(coeffStr)));
-    let constant = parseInt(linearMatch[2]);
-    let rightSide = parseInt(linearMatch[3]);
-    
-    let step1Side = rightSide - constant;
-    let finalX = step1Side / coeff;
-    
-    return `[Target] Solve for x: ${input}
+  setTimeout(() => s1.classList.add('show'), 200);
+  setTimeout(() => s2.classList.add('show'), 800);
+  setTimeout(() => s3.classList.add('show'), 1400);
+  setTimeout(() => ans.classList.add('show'), 2000);
+});
 
-Step 1: Isolate the variable term containing 'x'.
-Move the constant (${constant > 0 ? '+' : ''}${constant}) to the right side of the equation by flipping its sign.
-↳ ${coeff}x = ${rightSide} - (${constant})
-↳ ${coeff}x = ${step1Side}
-
-Step 2: Divide both sides by the coefficient of x (${coeff}) to compute the identity.
-↳ x = ${step1Side} / ${coeff}
-↳ x = ${parseFloat(finalX.toFixed(4))}
-
-Verification Result: Validated Solution ✔`;
-  }
-  
-  // Pattern 2: Quadratic Equations (e.g., x^2 - 5x + 6 = 0)
-  if(cleanInput.includes('x^2') && cleanInput.endsWith('=0')) {
-    const quadMatch = cleanInput.match(/^([+-]?\d*)x\^2([+-]\d*)x([+-]\d+)=0$/);
-    if(quadMatch) {
-      let aStr = quadMatch[1];
-      let a = aStr === '' ? 1 : (aStr === '+' ? 1 : (aStr === '-' ? -1 : parseInt(aStr)));
-      let bStr = quadMatch[2];
-      let b = bStr === '' ? 1 : (bStr === '+' ? 1 : (bStr === '-' ? -1 : parseInt(bStr)));
-      let c = parseInt(quadMatch[3]);
-      
-      let discriminant = (b * b) - (4 * a * c);
-      
-      let solutionText = `[Target] Solve Quadratic Form: ${input}\nUsing General Formula: x = [-b ± √(b² - 4ac)] / 2a\n\n`;
-      solutionText += `Step 1: Identify your coefficients.\n↳ a = ${a}, b = ${b}, c = ${c}\n\n`;
-      solutionText += `Step 2: Compute the Discriminant (Δ = b² - 4ac).\n↳ Δ = (${b})² - 4(${a})(${c})\n↳ Δ = ${b*b} - ${4*a*c} = ${discriminant}\n\n`;
-      
-      if(discriminant < 0) {
-        solutionText += `Step 3: Since Δ < 0, the equation has two Complex/Imaginary roots.\n↳ Roots contain 'i' components.`;
-      } else {
-        let root1 = (-b + Math.sqrt(discriminant)) / (2 * a);
-        let root2 = (-b - Math.sqrt(discriminant)) / (2 * a);
-        solutionText += `Step 3: Extract the standard real square roots.\n↳ x₁ = (-(${b}) + √${discriminant}) / (2*${a})\n↳ x₁ = ${parseFloat(root1.toFixed(4))}\n\n↳ x₂ = (-(${b}) - √${discriminant}) / (2*${a})\n↳ x₂ = ${parseFloat(root2.toFixed(4))}\n\nVerification Result: Solution set computed successfully ✔`;
-      }
-      return solutionText;
-    }
-  }
-
-  // Pattern 3: Standard Arithmetic fallback eval / sqrt commands
-  try {
-    let parsingExpression = cleanInput.replace(/sqrt\(([^)]+)\)/g, "Math.sqrt($1)");
-    let computedResult = Function('"use strict"; return (' + parsingExpression + ')')();
-    return `[Target] Evaluate expression: ${input}
-
-Step 1: Parse string expressions and enforce operational priority (PEMDAS / BODMAS).
-↳ Ordered computation processing...
-
-Step 2: Evaluate mathematical parameters natively.
-↳ Calculated Value = ${computedResult}
-
-Verification Result: Static conversion complete ✔`;
-  } catch(e) {
-    return `[Target] Context Processing: ${input}
-
-Notice: Could not parse customized mathematical patterns natively. 
-To transition this section into dynamic natural language responses, configure the Claude API connection inside your script tag using the target endpoint logic.`;
-  }
-}
-
-// ─── TOPICS ───
+// Topics Data
 const topics = [
-  { name: 'Arithmetic', icon: '🔢', lessons: 24, progress: 85 },
-  { name: 'Algebra', icon: '📐', lessons: 36, progress: 60 },
-  { name: 'Geometry', icon: '🔷', lessons: 28, progress: 40 },
-  { name: 'Trigonometry', icon: '📏', lessons: 22, progress: 20 },
-  { name: 'Calculus', icon: '∫', lessons: 40, progress: 10 },
-  { name: 'Statistics', icon: '📊', lessons: 30, progress: 35 },
-  { name: 'Probability', icon: '🎲', lessons: 18, progress: 55 },
-  { name: 'Number Theory', icon: '🔵', lessons: 20, progress: 5 },
+  {ico:'📐', name:'Algebra & Equations', desc:'Master linear equations, quadratic formulas, polynomials, and variable isolation techniques.'},
+  {ico:'📊', name:'Calculus Fundamentals', desc:'Understand limits, derivatives, integrals, and rates of change.'},
+  {ico:'📐', name:'Geometry & Trigonometry', desc:'Explore shapes, angles, theorems, and trigonometric functions with visual precision.'},
+  {ico:'📈', name:'Statistics & Probability', desc:'Analyze data distributions, variance, probability models, and statistical inference.'}
 ];
 const grid = document.getElementById('topicsGrid');
 topics.forEach(t => {
-  grid.innerHTML += `
-    <a href="#quiz" style="text-decoration:none">
-      <div class="topic-card" data-icon="${t.icon}">
-        <div class="topic-icon">${t.icon}</div>
-        <div class="topic-name">${t.name}</div>
-        <div class="topic-lessons">${t.lessons} lessons</div>
-        <div class="topic-bar"><div class="topic-fill" style="width:${t.progress}%"></div></div>
-      </div>
-    </a>`;
-});
-
-// ─── QUIZ ───
-const questions = [
-  { topic: 'Algebra · Beginner', q: 'If 3x + 7 = 22, what is x?', opts: ['3','4','5','6'], ans: 2 },
-  { topic: 'Geometry · Beginner', q: 'What is the area of a circle with radius 5? (use π ≈ 3.14)', opts: ['78.5','31.4','15.7','62.8'], ans: 0 },
-  { topic: 'Arithmetic · Intermediate', q: 'What is 15% of 240?', opts: ['34','36','40','32'], ans: 1 },
-  { topic: 'Trigonometry · Beginner', q: 'In a right triangle, sin(30°) = ?', opts: ['0.5','√3/2','1','√2/2'], ans: 0 },
-  { topic: 'Algebra · Intermediate', q: 'What are the roots of x² - 5x + 6 = 0?', opts: ['2 and 3','1 and 6','−2 and −3','3 and 4'], ans: 0 },
-];
-let qIdx = 0, answered = false;
-function loadQ() {
-  const q = questions[qIdx];
-  document.getElementById('quizMeta').textContent = q.topic;
-  document.getElementById('quizQ').textContent = q.q;
-  document.getElementById('quizFb').textContent = '';
-  document.getElementById('quizFb').style.color = '';
-  document.getElementById('quizNext').style.display = 'none';
-  document.getElementById('quizProgress').style.width = (qIdx / questions.length * 100) + '%';
-  document.getElementById('quizProgressText').textContent = `Question ${qIdx + 1} of ${questions.length}`;
-  answered = false;
-  const opts = document.getElementById('quizOpts');
-  opts.innerHTML = '';
-  q.opts.forEach((o, i) => {
-    const btn = document.createElement('button');
-    btn.className = 'quiz-opt';
-    btn.innerHTML = `<span class="opt-letter">${'ABCD'[i]}</span>${o}`;
-    btn.onclick = () => answer(i, btn);
-    opts.appendChild(btn);
-  });
-}
-function answer(i, btn) {
-  if (answered) return;
-  answered = true;
-  const q = questions[qIdx];
-  const opts = document.querySelectorAll('.quiz-opt');
-  opts[q.ans].classList.add('correct');
-  const fb = document.getElementById('quizFb');
-  if (i === q.ans) {
-    fb.textContent = '✓ Correct! Well done.';
-    fb.style.color = 'var(--green)';
-  } else {
-    btn.classList.add('wrong');
-    fb.textContent = `✗ The correct answer is ${q.opts[q.ans]}.`;
-    fb.style.color = 'var(--coral)';
-  }
-  document.getElementById('quizNext').style.display = 'block';
-}
-function nextQuestion() {
-  qIdx = (qIdx + 1) % questions.length;
-  loadQ();
-}
-loadQ();
-
-// ─── CALCULATOR ───
-let calcExpr = '';
-const buttons = [
-  ['C','(',')','/'],
-  ['7','8','9','*'],
-  ['4','5','6','-'],
-  ['1','2','3','+'],
-  ['0','.','⌫','='],
-];
-const calcBtns = document.getElementById('calcButtons');
-buttons.forEach(row => {
-  row.forEach(b => {
-    const btn = document.createElement('button');
-    btn.className = 'calc-btn' +
-      (b === '=' ? ' eq' : ['/','*','-','+'].includes(b) ? ' op' : b === 'C' ? ' clear' : '');
-    btn.textContent = b;
-    btn.onclick = () => calcInput(b);
-    calcBtns.appendChild(btn);
-  });
-});
-
-function calcInput(v) {
-  const res = document.getElementById('calcResult');
-  const expr = document.getElementById('calcExpr');
-  if (v === 'C') { calcExpr = ''; res.textContent = '0'; expr.textContent = '\u00a0'; return; }
-  if (v === '⌫') { calcExpr = calcExpr.slice(0,-1); }
-  else if (v === '=') {
-    try {
-      const result = Function('"use strict"; return (' + calcExpr + ')')();
-      expr.textContent = calcExpr + ' =';
-      res.textContent = parseFloat(result.toFixed(10)).toString();
-      calcExpr = result.toString();
-    } catch { res.textContent = 'Error'; calcExpr = ''; }
-    return;
-  } else { calcExpr += v; }
-  res.textContent = calcExpr || '0';
-  expr.textContent = '\u00a0';
-}
-
-document.addEventListener('keydown', e => {
-  const allowed = '0123456789.+-*/()';
-  if (allowed.includes(e.key)) calcInput(e.key);
-  else if (e.key === 'Enter') calcInput('=');
-  else if (e.key === 'Backspace') calcInput('⌫');
-  else if (e.key === 'Escape') calcInput('C');
-});
-
-// ─── FORMULAS ───
-const formulas = {
-  Algebra: [
-    { name:'Quadratic Formula', expr:'x = (−b ± √(b²−4ac)) / 2a', desc:'Roots of ax² + bx + c = 0' },
-    { name:'Difference of Squares', expr:'a² − b² = (a+b)(a−b)', desc:'Factoring shortcut' },
-    { name:'Sum of Squares', expr:'(a+b)² = a² + 2ab + b²', desc:'Expanding perfect square' },
-  ],
-  Geometry: [
-    { name:'Area of Circle', expr:'A = πr²', desc:'r is the radius' },
-    { name:'Circumference', expr:'C = 2πr', desc:'Perimeter of a circle' },
-    { name:'Pythagorean Theorem', expr:'a² + b² = c²', desc:'Right triangle sides' },
-    { name:'Area of Triangle', expr:'A = ½ × base × height', desc:'Any triangle' },
-  ],
-  Trigonometry: [
-    { name:'Sine', expr:'sin θ = opposite / hypotenuse', desc:'SOH' },
-    { name:'Cosine', expr:'cos θ = adjacent / hypotenuse', desc:'CAH' },
-    { name:'Tangent', expr:'tan θ = opposite / adjacent', desc:'TOA' },
-    { name:'Pythagorean Identity', expr:'sin²θ + cos²θ = 1', desc:'Always true' },
-  ],
-  Calculus: [
-    { name:'Derivative Definition', expr:'f\'(x) = lim(h→0) [f(x+h)−f(x)]/h', desc:'First principles' },
-    { name:'Power Rule', expr:'d/dx [xⁿ] = nxⁿ⁻¹', desc:'Differentiating power functions' },
-    { name:'Fundamental Theorem', expr:'∫ₐᵇ f(x)dx = F(b) − F(a)', desc:'Definite integral' },
-  ],
-  Statistics: [
-    { name:'Mean', expr:'x̄ = Σxᵢ / n', desc:'Average of all values' },
-    { name:'Standard Deviation', expr:'σ = √(Σ(xᵢ − μ)² / N)', desc:'Spread of data' },
-    { name:'Normal Distribution', expr:'P(x) = (1/σ√2π) e^(−(x−μ)²/2σ²)', desc:'Bell curve' },
-  ],
-};
-
-const tabs = document.getElementById('formulaTabs');
-const fGrid = document.getElementById('formulaGrid');
-let activeTab = 'Algebra';
-
-function renderFormulas(cat) {
-  fGrid.innerHTML = '';
-  formulas[cat].forEach(f => {
-    fGrid.innerHTML += `
-      <div class="formula-card visible">
-        <div class="f-name">${f.name}</div>
-        <div class="f-expr">${f.expr}</div>
-        <div class="f-desc">${f.desc}</div>
-      </div>`;
-  });
-}
-
-Object.keys(formulas).forEach(cat => {
-  const btn = document.createElement('button');
-  btn.className = 'ftab' + (cat === activeTab ? ' active' : '');
-  btn.textContent = cat;
-  btn.onclick = () => {
-    document.querySelectorAll('.ftab').forEach(t => t.classList.remove('active'));
-    btn.classList.add('active');
-    activeTab = cat;
-    renderFormulas(cat);
-  };
-  tabs.appendChild(btn);
-});
-renderFormulas(activeTab);
-
-// ─── AI ASSISTANT ───
-function toggleAssistant() {
-  const panel = document.getElementById('assistantPanel');
-  panel.classList.toggle('open');
-  if (panel.classList.contains('open')) {
-    document.getElementById('assistantInput').focus();
-    document.getElementById('assistantMessages').scrollTop = 999999;
-  }
-}
-
-function assistantQuick(text) {
-  document.getElementById('assistantInput').value = text;
-  sendAssistantMessage();
-}
-
-function addAssistantMessage(text, sender, mono) {
-  const messages = document.getElementById('assistantMessages');
   const el = document.createElement('div');
-  el.className = 'a-msg ' + sender + (mono ? ' mono' : '');
-  el.textContent = text;
-  messages.appendChild(el);
-  messages.scrollTop = messages.scrollHeight;
-  return el;
+  el.className = 'topic-chip';
+  el.innerHTML = `<div class="t-ico">${t.ico}</div><h4>${t.name}</h4><span>View overview</span>`;
+  el.addEventListener('click', ()=>{
+    document.getElementById('detailTitle').textContent = t.name;
+    document.getElementById('detailBody').textContent = t.desc;
+    document.getElementById('topicDetail').classList.add('show');
+    document.getElementById('topicDetail').scrollIntoView({behavior:'smooth', block:'center'});
+  });
+  grid.appendChild(el);
+});
+document.getElementById('closeDetail').addEventListener('click', ()=>{
+  document.getElementById('topicDetail').classList.remove('show');
+});
+
+// Quiz Data
+const questions = [
+  {text:'What is 7 × 8?', options:['54','56','64','48'], correct:1},
+  {text:'Solve for x: x + 9 = 15', options:['x = 5','x = 6','x = 7','x = 24'], correct:1},
+  {text:'What is the sum of the angles in a triangle?', options:['90°','180°','270°','360°'], correct:1},
+  {text:'What is 15% of 200?', options:['15','20','30','40'], correct:2},
+  {text:'What is the square root of 81?', options:['8','9','7','10'], correct:1},
+];
+let qIndex = 0, score = 0, answered = false;
+
+function renderQuestion(){
+    answered = false;
+    const q = questions[qIndex];
+    document.getElementById('qText').textContent = q.text;
+    document.getElementById('quizProgressLabel').textContent = `Question ${qIndex + 1} of ${questions.length}`;
+    document.getElementById('quizScoreLabel').textContent = `Score: ${score}`;
+    document.getElementById('progressFill').style.width = `${((qIndex + 1) / questions.length) * 100}%`;
+    const opWrap = document.getElementById('qOptions');
+    opWrap.innerHTML = '';
+    q.options.forEach((opt, i)=>{
+        const b = document.createElement('button');
+        b.className = 'q-opt';
+        b.textContent = opt;
+        b.addEventListener('click', ()=> selectAnswer(i, b));
+        opWrap.appendChild(b);
+    });
+    const nextBtn = document.getElementById('nextBtn');
+    nextBtn.classList.remove('active');
 }
 
-function sendAssistantMessage() {
-  const input = document.getElementById('assistantInput');
-  const query = input.value.trim();
-  if (!query) return;
-  addAssistantMessage(query, 'user');
-  input.value = '';
-
-  const thinking = addAssistantMessage('Thinking…', 'bot');
-
-  setTimeout(() => {
-    thinking.remove();
-    const reply = generateStepByStepSolution(query);
-    addAssistantMessage(reply, 'bot', true);
-  }, 500);
+function selectAnswer(i, btn){
+    if(answered) return;
+    answered = true;
+    const q = questions[qIndex];
+    const allBtns = document.querySelectorAll('.q-opt');
+    allBtns.forEach(b=>b.disabled = true);
+    if(i === q.correct){
+        btn.classList.add('correct');
+        score++;
+    } else {
+        btn.classList.add('wrong');
+        if(allBtns[q.correct]) allBtns[q.correct].classList.add('correct');
+    }
+    document.getElementById('quizScoreLabel').textContent = `Score: ${score}`;
+    const nextBtn = document.getElementById('nextBtn');
+    nextBtn.classList.add('active');
 }
+
+document.getElementById('nextBtn').addEventListener('click', ()=>{
+  if(!answered) return;
+  qIndex++;
+  if(qIndex < questions.length){
+    renderQuestion();
+  } else {
+    document.getElementById('progressFill').style.width = '100%';
+    document.getElementById('quizActive').style.display = 'none';
+    document.getElementById('quizResult').classList.add('show');
+    document.getElementById('finalScore').textContent = `${score} / ${questions.length}`;
+    const pct = score/questions.length;
+    document.getElementById('resultMsg').textContent =
+      pct === 1 ? 'Perfect score! Excellent work 🎉' :
+      pct >= 0.6 ? 'Great job, keep practicing!' :
+      'Not bad — try again to improve your score.';
+  }
+});
+
+document.getElementById('restartBtn').addEventListener('click', ()=>{
+  qIndex = 0; score = 0;
+  document.getElementById('quizResult').classList.remove('show');
+  document.getElementById('quizActive').style.display = 'block';
+  renderQuestion();
+});
+
+renderQuestion();
+
+/* ---------- AI Assistant Widget Logic ---------- */
+const aiFab = document.getElementById('aiFab');
+const aiPanel = document.getElementById('aiPanel');
+const aiClose = document.getElementById('aiClose');
+const aiBody = document.getElementById('aiBody');
+const aiInput = document.getElementById('aiInput');
+const aiSend = document.getElementById('aiSend');
+const aiQuick = document.getElementById('aiQuick');
+
+let aiHistory = [];
+let aiBusy = false;
+
+aiFab.addEventListener('click', ()=>{
+  aiPanel.classList.toggle('open');
+  if(aiPanel.classList.contains('open')) aiInput.focus();
+});
+aiClose.addEventListener('click', ()=> aiPanel.classList.remove('open'));
+
+aiQuick.addEventListener('click', (e)=>{
+  const btn = e.target.closest('button[data-q]');
+  if(!btn) return;
+  sendToAI(btn.getAttribute('data-q'));
+});
+
+function addMsg(role, text){
+  const div = document.createElement('div');
+  div.className = `ai-msg ${role === 'user' ? 'user' : 'bot'}`;
+  div.textContent = text;
+  aiBody.appendChild(div);
+  aiBody.scrollTop = aiBody.scrollHeight;
+ renderMathInElement(div, {
+  delimiters: [
+    {left: '$$', right: '$$', display: true},
+    {left: '$', right: '$', display: false}
+  ],
+  throwOnError: false
+});
+  return div;
+}
+
+function addTyping(){
+  const div = document.createElement('div');
+  div.className = 'ai-msg typing';
+  div.id = 'typingIndicator';
+  div.innerHTML = '<span></span><span></span><span></span>';
+  aiBody.appendChild(div);
+  aiBody.scrollTop = aiBody.scrollHeight;
+}
+function removeTyping(){
+  const t = document.getElementById('typingIndicator');
+  if(t) t.remove();
+}
+
+async function sendToAI(text){
+  if(!text || aiBusy) return;
+  aiBusy = true;
+  aiSend.disabled = true;
+  aiInput.value = '';
+  addMsg('user', text);
+  aiHistory.push({role:'user', content:text});
+  addTyping();
+
+  const AI_PROXY_URL = "/api/chat";
+
+  try {
+      const response = await fetch(AI_PROXY_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ 
+          prompt: text, 
+          message: text,
+          messages: aiHistory 
+        })
+      });
+
+      const data = await response.json();
+      removeTyping();
+
+      if (!response.ok) {
+        addMsg('bot', data.error || 'Something went wrong reaching the assistant. Please try again in a moment.');
+      } else {
+        const replyText = data.reply || data.response || data.text || 'No response';
+        addMsg('bot', replyText);
+        aiHistory.push({ role: 'assistant', content: replyText });
+      }
+  
+  } catch(err){
+    removeTyping();
+    addMsg('bot', 'Could not reach the AI assistant right now. Check your connection and try again.');
+  }
+
+  aiBusy = false;
+  aiSend.disabled = false;
+}
+
+aiSend.addEventListener('click', ()=> sendToAI(aiInput.value.trim()));
+aiInput.addEventListener('keydown', (e)=>{
+  if(e.key === 'Enter') sendToAI(aiInput.value.trim());
+});
 </script>
 </body>
 </html>

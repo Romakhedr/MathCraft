@@ -3,18 +3,11 @@
   "version": "1.0.0",
   "private": true,
   "type": "module",
-  "scripts": {
-    "dev": "vercel dev",
-    "start": "vercel dev",
-    "build": "echo 'No build step required - static site with serverless functions'"
-  },
+  "scripts": {},
   "engines": {
     "node": ">=18.0.0"
   },
   "dependencies": {
-    "@anthropic-ai/sdk": "^0.116.0",
-    "@vercel/analytics": "^2.0.1",
-    "@vercel/speed-insights": "^2.0.0",
-    "next": "^14.2.0"
+    "@vercel/analytics": "^2.0.1"
   }
 }
