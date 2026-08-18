@@ -1,39 +1,75 @@
 import os
 import logging
 import requests
-from requests.exceptions import HTTPError, ConnectionError, Timeout, RequestException
 from typing import Dict, Any
+from web3 import Web3
+from web3.middleware import ExtraDataToPOAMiddleware
 
-logging.basicConfig(
-    level=logging.INFO,
-    format="%(asctime)s - MathCraft-IBM-Engine - %(levelname)s - %(message)s"
-)
+logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
 
 class MathCraftIBMEngine:
+    """
+    محرك الذكاء الاصطناعي لمنصة Math Craft ومتوافق مع متغيرات البيئة في Vercel وتحدي IBM Bob.
+    """
     def __init__(self):
-        self.api_url = os.getenv("IBMAPIURL")
-        self.api_key = os.getenv("IBMBOBAPIKEY")
-        self.timeout = 15.0
+        # ربط متغيرات Vercel بالخدمة مع بدائل احتياطية آمنة
+        self.api_url = os.getenv("IBMAPIURL") or os.getenv("IBM_BOB_API_URL", "")
+        self.api_key = os.getenv("IBMBOBAPIKEY") or os.getenv("IBM_BOB_API_KEY", "")
+        self.timeout = 30
 
-        if not self.api_url or not self.api_key:
-            logging.error("Configuration Warning: Missing environment variables.")
+        # إعدادات Web3 وشبكة BSC باستخدام متغيرات Vercel
+        self.bsc_rpc = os.getenv("BSC_RPC_URL") or os.getenv("mathcraftv2", "https://data-seed-prebsc-1-s1.binance.org:8545/")
+        self.private_key = os.getenv("DISTRIBUTOR_PRIVATE_KEY") or os.getenv("mathcraft_backend", "")
+        self.contract_address = os.getenv("CONTRACT_ADDRESS", "")
+
+        self.w3 = Web3(Web3.HTTPProvider(self.bsc_rpc))
+        try:
+            self.w3.middleware_onion.inject(ExtraDataToPOAMiddleware, layer=0)
+        except Exception:
+            pass
+
+        self.contract_abi = [
+            {
+                "inputs": [
+                    {"internalType": "address", "name": "student", "type": "address"},
+                    {"internalType": "uint256", "name": "amount", "type": "uint256"}
+                ],
+                "name": "distributeReward",
+                "outputs": [],
+                "stateMutability": "nonpayable",
+                "type": "function"
+            }
+        ]
+
+        if self.contract_address and self.w3.is_connected():
+            try:
+                self.contract = self.w3.eth.contract(
+                    address=Web3.to_checksum_address(self.contract_address),
+                    abi=self.contract_abi
+                )
+            except Exception:
+                self.contract = None
+        else:
+            self.contract = None
 
     def _get_secure_headers(self) -> Dict[str, str]:
         return {
-            "Authorization": f"Bearer {self.api_key}",
             "Content-Type": "application/json",
-            "Accept": "application/json"
+            "Authorization": f"Bearer {self.api_key}"
         }
 
-    def process_math_request(self, equation: str, difficulty: str = "beginner") -> Dict[str, Any]:
+    def process_math_request(self, equation: str, difficulty: str = "medium") -> Dict[str, Any]:
+        """
+        إرسال المعادلة إلى محرك IBM Bob / watsonx API للحصول على الحل خطوة بخطوة.
+        """
         if not self.api_url or not self.api_key:
-            return {"success": False, "error": "Server configuration incomplete. Missing IBM credentials."}
-
+            return {"success": False, "error": "Server configuration incomplete for IBM Bob API (Check IBMAPIURL and IBMBOBAPIKEY)."}
+        
         if not equation or not equation.strip():
             return {"success": False, "error": "Equation string cannot be empty."}
 
         payload = {
-            "input": f"Solve this math equation step by step for a {difficulty} student: {equation}",
+            "input": f"Solve this math equation step by step for a {difficulty} level student and provide the final verified answer: {equation}",
             "parameters": {
                 "max_new_tokens": 500,
                 "temperature": 0.5
@@ -51,30 +87,45 @@ class MathCraftIBMEngine:
             )
             response.raise_for_status()
             return {"success": True, "data": response.json()}
+        except requests.exceptions.RequestException as e:
+            logging.error(f"IBM Bob API error: {e}")
+            return {"success": False, "error": str(e)}
 
-        except ConnectionError as ce:
-            logging.error(f"Network Connection Failed: {ce}")
-            return {"success": False, "error": "Unable to connect to IBM servers."}
-        except Timeout as te:
-            logging.error(f"Request Timeout Error: {te}")
-            return {"success": False, "error": "The AI model response timed out."}
-        except HTTPError as he:
-            logging.error(f"IBM API HTTP Error [{response.status_code}]: {he}")
-            return {"success": False, "error": f"IBM API returned error status: {response.status_code}"}
-        except ValueError as ve:
-            logging.error(f"JSON Parsing Error: {ve}")
-            return {"success": False, "error": "Received malformed data from AI service."}
-        except RequestException as re:
-            logging.error(f"Unhandled Request Exception: {re}")
-            return {"success": False, "error": "Network communication error occurred."}
+    def reward_student_on_success(self, student_wallet: str, reward_amount_tokens: float) -> Dict[str, Any]:
+        """
+        منح المكافأة تلقائياً عبر عقد BSC الذكي عند إتمام الطالب للمسألة بنجاح.
+        """
+        if not self.contract or not self.private_key:
+            return {"success": False, "error": "Web3 contract or private key not configured."}
+
+        try:
+            checksum_wallet = Web3.to_checksum_address(student_wallet)
+            amount_wei = self.w3.to_wei(reward_amount_tokens, 'ether')
+
+            account = self.w3.eth.account.from_key(self.private_key)
+            nonce = self.w3.eth.get_transaction_count(account.address)
+
+            txn = self.contract.functions.distributeReward(
+                checksum_wallet, 
+                amount_wei
+            ).build_transaction({
+                'chainId': self.w3.eth.chain_id,
+                'gas': 150000,
+                'gasPrice': self.w3.eth.gas_price,
+                'nonce': nonce,
+            })
+
+            signed_txn = self.w3.eth.account.sign_transaction(txn, private_key=self.private_key)
+            tx_hash = self.w3.eth.send_raw_transaction(signed_txn.raw_transaction)
+            
+            logging.info(f"Reward transaction sent on BSC: {tx_hash.hex()}")
+            receipt = self.w3.eth.wait_for_transaction_receipt(tx_hash)
+
+            return {
+                "success": True,
+                "tx_hash": tx_hash.hex(),
+                "block_number": receipt.blockNumber
+            }
         except Exception as e:
-            logging.critical(f"Critical System Failure: {str(e)}")
-            return {"success": False, "error": "An internal system error occurred."}
-
-if __name__ == "__main__":
-    print("--- Running MathCraft IBM Engine Test ---")
-    engine = MathCraftIBMEngine()
-    test_equation = "3x + 5 = 20"
-    result = engine.process_math_request(test_equation)
-    print("Test Execution Result:")
-    print(result)
+            logging.error(f"Blockchain reward distribution failed: {e}")
+            return {"success": False, "error": str(e)}
