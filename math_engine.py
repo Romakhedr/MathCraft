@@ -9,15 +9,16 @@ logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(
 
 class MathCraftIBMEngine:
     """
-    محرك الذكاء الاصطناعي لمنصة Math Craft ومتوافق مع متغيرات البيئة في Vercel وتحدي IBM Bob.
+    AI engine for the Math Craft platform, compatible with Vercel environment
+    variables and the IBM Bob challenge.
     """
     def __init__(self):
-        # ربط متغيرات Vercel بالخدمة مع بدائل احتياطية آمنة
+        # Bind Vercel environment variables to the service with safe fallbacks
         self.api_url = os.getenv("IBMAPIURL") or os.getenv("IBM_BOB_API_URL", "")
         self.api_key = os.getenv("IBMBOBAPIKEY") or os.getenv("IBM_BOB_API_KEY", "")
         self.timeout = 30
 
-        # إعدادات Web3 وشبكة BSC باستخدام متغيرات Vercel
+        # Web3 and BSC network settings using Vercel environment variables
         self.bsc_rpc = os.getenv("BSC_RPC_URL") or os.getenv("mathcraftv2", "https://data-seed-prebsc-1-s1.binance.org:8545/")
         self.private_key = os.getenv("DISTRIBUTOR_PRIVATE_KEY") or os.getenv("mathcraft_backend", "")
         self.contract_address = os.getenv("CONTRACT_ADDRESS", "")
@@ -60,7 +61,7 @@ class MathCraftIBMEngine:
 
     def process_math_request(self, equation: str, difficulty: str = "medium") -> Dict[str, Any]:
         """
-        إرسال المعادلة إلى محرك IBM Bob / watsonx API للحصول على الحل خطوة بخطوة.
+        Send the equation to the IBM Bob / watsonx API to get a step-by-step solution.
         """
         if not self.api_url or not self.api_key:
             return {"success": False, "error": "Server configuration incomplete for IBM Bob API (Check IBMAPIURL and IBMBOBAPIKEY)."}
@@ -93,7 +94,8 @@ class MathCraftIBMEngine:
 
     def reward_student_on_success(self, student_wallet: str, reward_amount_tokens: float) -> Dict[str, Any]:
         """
-        منح المكافأة تلقائياً عبر عقد BSC الذكي عند إتمام الطالب للمسألة بنجاح.
+        Automatically grant a reward via the BSC smart contract when a student
+        successfully completes the problem.
         """
         if not self.contract or not self.private_key:
             return {"success": False, "error": "Web3 contract or private key not configured."}
@@ -129,4 +131,3 @@ class MathCraftIBMEngine:
         except Exception as e:
             logging.error(f"Blockchain reward distribution failed: {e}")
             return {"success": False, "error": str(e)}
-    
