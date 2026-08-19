@@ -1,7 +1,3 @@
-<p align="center">
-  <img src="MathCraft_Logo-1.jpg" alt="MathCraft Logo" width="300"/>
-</p>
-
 # MathCraft
 
 ### Mathematics Education
