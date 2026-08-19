@@ -65,3 +65,23 @@ IBMBOBAPIKEY=your_ibm_bob_api_key
 MathCraft aims to empower students worldwide by combining artificial intelligence with decentralized incentives, establishing a reliable, engaging, and efficient learning environment.
 
 Built with passion by Reham Hamdy Elsayed khedr.
+
+---
+
+## 🚀 Selected Challenge Theme
+
+**Advance Space Exploration with AI**
+
+While MathCraft's core mission is mathematics education, the platform's AI-driven architecture — combining real-time tutoring, adaptive analytics, and insight-driven data interpretation — reflects the same principles required to transform complex, data-heavy domains (like space exploration) into accessible, decision-supportive systems.
+
+---
+
+## 🤖 How IBM Bob Was Used
+
+IBM Bob served as the **primary development tool** throughout this project:
+
+* **Code Generation & Refactoring:** Bob was used to write, debug, and refactor core backend logic in `math_engine.py`, including the IBM watsonx API integration and Web3 smart contract interaction functions.
+* **Documentation:** Bob assisted in generating and maintaining this README, including structuring sections, formatting badges, and writing setup instructions.
+* **Debugging & Troubleshooting:** Bob was used interactively to diagnose authentication issues, environment configuration, and API connectivity problems during development.
+* **Project Structure Auditing:** Bob helped verify the consistency of the project's file structure and identify missing configuration files (e.g., `.env.example`).
+
