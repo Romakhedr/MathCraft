@@ -1,0 +1,114 @@
+[2J[3J[H
+   ───────────────────── Welcome to ─────────────────────
+
+   ▀▀▀▀▀▀▀▀▀▀▀▀▀▀       ▀▀▀▀▀▀▀▀▀▀▀▀     ▀▀▀▀▀▀▀▀▀▀▀▀▀▀
+   ▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀    ▀▀▀▀▀▀▀▀▀▀▀▀▀▀    ▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀
+     ▀▀▀▀     ▀▀▀▀▀   ▀▀▀▀        ▀▀▀▀     ▀▀▀▀     ▀▀▀▀▀
+     ▀▀▀▀▀▀▀▀▀▀▀▀▘    ▀▀▀▀        ▀▀▀▀     ▀▀▀▀▀▀▀▀▀▀▀▀▘
+     ▀▀▀▀▀▀▀▀▀▀▀▀▘    ▀▀▀▀        ▀▀▀▀     ▀▀▀▀▀▀▀▀▀▀▀▀▘
+     ▀▀▀▀     ▀▀▀▀▀   ▀▀▀▀        ▀▀▀▀     ▀▀▀▀     ▀▀▀▀▀
+   ▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀    ▀▀▀▀▀▀▀▀▀▀▀▀▀▀    ▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀
+   ▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀      ▀▀▀▀▀▀▀▀▀▀▀▀     ▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀
+
+   ░░░░░░░░░█▀▀▀░░░░█░░█░░░░█▀▀▀░░░░█░░░░░░░█░░░░░░░░░░░░
+   ░░░░░░░░░▀▀▀█░░░░█▀▀█░░░░█▀▀▀░░░░█░░░░░░░█░░░░░░░░░░░░
+   ░░░░░░░░░▀▀▀▀░░░░▀░░▀░░░░▀▀▀▀░░░░▀▀▀▀░░░░▀▀▀▀░░░░░░░░░
+
+    ─────────────────── Version 2.0.1 ───────────────────
+
+
+                        Did you know?
+
+How to use Bob Shell? Just ask and it will use the docs tool
+ to answer your question
+           You can use Ctrl+J to write a new line
+      You can use `bob -r` to resume a previous session
+
+                    /workspaces/MathCraft
+
+ Users should independently verify accuracy of AI-generated
+ content.
+
+[2J[3J[H
+   ───────────────────── Welcome to ─────────────────────
+
+   ▀▀▀▀▀▀▀▀▀▀▀▀▀▀       ▀▀▀▀▀▀▀▀▀▀▀▀     ▀▀▀▀▀▀▀▀▀▀▀▀▀▀
+   ▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀    ▀▀▀▀▀▀▀▀▀▀▀▀▀▀    ▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀
+     ▀▀▀▀     ▀▀▀▀▀   ▀▀▀▀        ▀▀▀▀     ▀▀▀▀     ▀▀▀▀▀
+     ▀▀▀▀▀▀▀▀▀▀▀▀▘    ▀▀▀▀        ▀▀▀▀     ▀▀▀▀▀▀▀▀▀▀▀▀▘
+     ▀▀▀▀▀▀▀▀▀▀▀▀▘    ▀▀▀▀        ▀▀▀▀     ▀▀▀▀▀▀▀▀▀▀▀▀▘
+     ▀▀▀▀     ▀▀▀▀▀   ▀▀▀▀        ▀▀▀▀     ▀▀▀▀     ▀▀▀▀▀
+   ▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀    ▀▀▀▀▀▀▀▀▀▀▀▀▀▀    ▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀
+   ▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀      ▀▀▀▀▀▀▀▀▀▀▀▀     ▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀
+
+   ░░░░░░░░░█▀▀▀░░░░█░░█░░░░█▀▀▀░░░░█░░░░░░░█░░░░░░░░░░░░
+   ░░░░░░░░░▀▀▀█░░░░█▀▀█░░░░█▀▀▀░░░░█░░░░░░░█░░░░░░░░░░░░
+   ░░░░░░░░░▀▀▀▀░░░░▀░░▀░░░░▀▀▀▀░░░░▀▀▀▀░░░░▀▀▀▀░░░░░░░░░
+
+    ─────────────────── Version 2.0.1 ───────────────────
+
+
+                        Did you know?
+
+How to use Bob Shell? Just ask and it will use the docs tool
+ to answer your question
+           You can use Ctrl+J to write a new line
+      You can use `bob -r` to resume a previous session
+
+                    /workspaces/MathCraft
+
+ Users should independently verify accuracy of AI-generated
+ content.
+
+[workspace] detectPath resolved: /workspaces/MathCraft (cwd=/workspaces/MathCraft, explicit=none)
+[BobHarness] Telemetry initialized (provider=bob)
+[CliFileWatcher] chokidar 5 has no glob support, the following patterns will not fire: .bob/agents/*.md
+[CliFileWatcher] chokidar 5 has no glob support, the following patterns will not fire: .bob/*/mcp.json
+[MCP:ConfigManager] Config file listeners initialized
+[MCP] [MathCraft] Initializing MCP for workspace { workspaceRoot: '/workspaces/MathCraft', blockUntilReady: false }
+[CliFileWatcher] chokidar 5 has no glob support, the following patterns will not fire: .bob/*/custom_modes.yaml
+[CliFileWatcher] chokidar 5 has no glob support, the following patterns will not fire: .bob/skills/*/SKILL.md
+[CliFileWatcher] chokidar 5 has no glob support, the following patterns will not fire: .bob/*/skills/*/SKILL.md
+[CliFileWatcher] chokidar 5 has no glob support, the following patterns will not fire: .agents/skills/*/SKILL.md
+[CliFileWatcher] chokidar 5 has no glob support, the following patterns will not fire: .claude/skills/*/SKILL.md
+[CliFileWatcher] chokidar 5 has no glob support, the following patterns will not fire: .bob/skills/*
+[CliFileWatcher] chokidar 5 has no glob support, the following patterns will not fire: .bob/*/skills/*
+[CliFileWatcher] chokidar 5 has no glob support, the following patterns will not fire: .agents/skills/*
+[CliFileWatcher] chokidar 5 has no glob support, the following patterns will not fire: .claude/skills/*
+[PolicyService] Initialising policy watcher on platform "linux"
+[PolicyService] Reading policy file: /etc/bob/policy.json
+[PolicyService] No policies found in policy file — all settings remain under user control
+[TaskStore] Task store opened /home/codespace/.bob/db/bob.db
+[2J[3J[H
+   ───────────────────── Welcome to ─────────────────────
+
+   ▀▀▀▀▀▀▀▀▀▀▀▀▀▀       ▀▀▀▀▀▀▀▀▀▀▀▀     ▀▀▀▀▀▀▀▀▀▀▀▀▀▀
+   ▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀    ▀▀▀▀▀▀▀▀▀▀▀▀▀▀    ▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀
+     ▀▀▀▀     ▀▀▀▀▀   ▀▀▀▀        ▀▀▀▀     ▀▀▀▀     ▀▀▀▀▀
+     ▀▀▀▀▀▀▀▀▀▀▀▀▘    ▀▀▀▀        ▀▀▀▀     ▀▀▀▀▀▀▀▀▀▀▀▀▘
+     ▀▀▀▀▀▀▀▀▀▀▀▀▘    ▀▀▀▀        ▀▀▀▀     ▀▀▀▀▀▀▀▀▀▀▀▀▘
+     ▀▀▀▀     ▀▀▀▀▀   ▀▀▀▀        ▀▀▀▀     ▀▀▀▀     ▀▀▀▀▀
+   ▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀    ▀▀▀▀▀▀▀▀▀▀▀▀▀▀    ▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀
+   ▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀      ▀▀▀▀▀▀▀▀▀▀▀▀     ▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀
+
+   ░░░░░░░░░█▀▀▀░░░░█░░█░░░░█▀▀▀░░░░█░░░░░░░█░░░░░░░░░░░░
+   ░░░░░░░░░▀▀▀█░░░░█▀▀█░░░░█▀▀▀░░░░█░░░░░░░█░░░░░░░░░░░░
+   ░░░░░░░░░▀▀▀▀░░░░▀░░▀░░░░▀▀▀▀░░░░▀▀▀▀░░░░▀▀▀▀░░░░░░░░░
+
+    ─────────────────── Version 2.0.1 ───────────────────
+
+
+                        Did you know?
+
+           You can use Ctrl+J to write a new line
+      You can use `bob -r` to resume a previous session
+How to use Bob Shell? Just ask and it will use the docs tool
+ to answer your question
+
+                    /workspaces/MathCraft
+
+ Users should independently verify accuracy of AI-generated
+ content.
+
+
+  (ℹ) Authenticated via API key.
