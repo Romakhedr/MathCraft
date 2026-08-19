@@ -18,8 +18,8 @@ class MathCraftIBMEngine:
 
     def __init__(self):
         # Bind Vercel environment variables to the service with safe fallbacks
-        self.api_url = os.getenv("IBMAPIURL") or os.getenv("IBM_BOB_API_URL", "")
-        self.api_key = os.getenv("IBMBOBAPIKEY") or os.getenv("IBM_BOB_API_KEY", "")
+        self.api_url = os.getenv("IBMAPIURL") or os.getenv("IBMBOBAPIURL", "")
+        self.api_key = os.getenv("IBMBOBAPIKEY") or os.getenv("IBMBOBAPIKEY", "")
         self.timeout = 30
 
         # Web3 and BSC network settings using Vercel environment variables
