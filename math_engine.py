@@ -172,3 +172,19 @@ class MathCraftIBMEngine:
         except Exception as e:
             logging.error(f"Failed to fetch balance: {e}")
             return {"success": False, "error": str(e)}
+
+    def get_student_balance(self, student_wallet: str) -> Dict[str, Any]:
+        """
+        Read the student's current MTH token balance from the contract (read-only, no gas needed).
+        """
+        if not self.contract:
+            return {"success": False, "error": "Contract not configured."}
+
+        try:
+            checksum_wallet = Web3.to_checksum_address(student_wallet)
+            balance_wei = self.contract.functions.balanceOf(checksum_wallet).call()
+            balance_tokens = self.w3.from_wei(balance_wei, "ether")
+            return {"success": True, "balance": float(balance_tokens)}
+        except Exception as e:
+            logging.error(f"Failed to fetch balance: {e}")
+            return {"success": False, "error": str(e)}
