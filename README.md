@@ -67,12 +67,20 @@ MathCraft aims to empower students worldwide by combining artificial intelligenc
 Built with passion by Reham Hamdy Elsayed khedr.
 
 ---
-
 ## 🚀 Selected Challenge Theme
 
-**Advance Space Exploration with AI**
+**Wildcard Challenge — Intelligent Systems for the Future of Work**
 
-While MathCraft's core mission is mathematics education, the platform's AI-driven architecture — combining real-time tutoring, adaptive analytics, and insight-driven data interpretation — reflects the same principles required to transform complex, data-heavy domains (like space exploration) into accessible, decision-supportive systems.
+MathCraft's adaptive-learning and credentialing engine has been extended into **MathCraft for Work** (`/work`), a version that helps working professionals build the quantitative skills their jobs actually require — pricing a deal, sizing a forecast, reading a dashboard — instead of a generic curriculum.
+
+It directly answers the Wildcard brief of helping people **plan, coordinate, decide, and execute** work more effectively:
+
+- **Plan** — an AI diagnostic identifies which quantitative gap is costing someone time, tied to their actual role.
+- **Coordinate** — a team dashboard shows managers where a team's decision-readiness is thin, before it becomes a bottleneck.
+- **Decide** — scenario-based challenges are built from real workplace decisions, not textbook problems.
+- **Execute** — learning happens next to the task itself, so the skill is usable immediately.
+
+🔗 **Live demo:** [math-craft-gray.vercel.app/work](https://math-craft-gray.vercel.app/work)
 
 ---
 
