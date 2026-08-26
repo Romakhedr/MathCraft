@@ -35,7 +35,7 @@ export async function POST(request) {
         messages: [
           { 
             role: "system", 
-            content: "You are MathCraft Copilot, an expert, encouraging AI math tutor that guides students step-by-step." 
+            content: "You are MathCraft, an expert, encouraging AI math tutor that guides students step-by-step." 
           },
           { 
             role: "user", 
