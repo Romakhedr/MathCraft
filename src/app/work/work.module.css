@@ -1,0 +1,215 @@
+/* ===== MathCraft for Work — matches the live MathCraft brand ===== */
+
+.page {
+  width: 100%;
+  color: #ffffff;
+  font-family: var(--font-sans), sans-serif;
+  background: #0b2a1c;
+}
+
+.serif { font-family: var(--font-serif), serif; }
+.italic { font-style: italic; }
+
+/* ---------- shared eyebrow label ---------- */
+.eyebrowDark, .eyebrowLight {
+  display: flex; align-items: center; gap: 10px;
+  font-size: 12px; font-weight: 600; letter-spacing: 0.18em; text-transform: uppercase;
+  margin-bottom: 14px;
+}
+.eyebrowDark { color: #e8b24d; }
+.eyebrowLight { color: #3c7a56; }
+.eyebrowLine { width: 20px; height: 1px; }
+.eyebrowDark .eyebrowLine { background: #e8b24d; }
+.eyebrowLight .eyebrowLine { background: #3c7a56; }
+
+/* ---------- buttons ---------- */
+.btnGold {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: #e8b24d; color: #14301f; font-weight: 700; font-size: 15px;
+  padding: 12px 22px; border-radius: 999px; border: none; cursor: pointer;
+}
+.btnOutlineDark {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: transparent; color: #ffffff; font-weight: 600; font-size: 15px;
+  padding: 12px 22px; border-radius: 999px; border: 1.5px solid rgba(255,255,255,0.35); cursor: pointer;
+}
+
+/* ---------- header ---------- */
+.header {
+  max-width: 1040px; margin: 0 auto;
+  padding: 22px 20px;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.brand { display: flex; align-items: baseline; gap: 8px; }
+.brandName { font-size: 20px; font-weight: 700; }
+.brandGold { color: #e8b24d; }
+.badge {
+  font-size: 10px; text-transform: uppercase; letter-spacing: 0.14em;
+  color: #e8b24d; border: 1px solid rgba(232,178,77,0.4); border-radius: 999px; padding: 3px 10px;
+}
+
+/* ---------- hero (dark) ---------- */
+.hero { position: relative; overflow: hidden; }
+.hero::before {
+  content: ""; position: absolute; inset: 0;
+  background: radial-gradient(circle at 85% 10%, rgba(232,178,77,0.10), transparent 45%);
+  pointer-events: none;
+}
+.heroInner { position: relative; max-width: 1040px; margin: 0 auto; padding: 12px 20px 56px; }
+
+.heroTitle { font-size: 2.1rem; font-weight: 700; line-height: 1.12; max-width: 700px; }
+@media (min-width: 640px) { .heroTitle { font-size: 3.1rem; } }
+
+.heroSub { margin-top: 20px; max-width: 540px; color: #cddbd1; font-size: 16px; line-height: 1.65; }
+
+.heroActions { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 28px; }
+
+/* ---------- diagnostic card (dark green, like the site's quiz card) ---------- */
+.diagnostic {
+  margin-top: 44px; border-radius: 20px;
+  background: #123322; border: 1px solid rgba(255,255,255,0.06);
+  overflow: hidden;
+}
+.tabs { padding: 22px 22px 0; display: flex; flex-wrap: wrap; gap: 8px; }
+.tab {
+  font-family: var(--font-sans), sans-serif; font-weight: 600; font-size: 12.5px;
+  padding: 7px 15px; border-radius: 999px;
+  border: 1px solid rgba(255,255,255,0.12); background: transparent; color: #b9c9be;
+  cursor: pointer;
+}
+.tab:hover { border-color: rgba(232,178,77,0.5); }
+.tabActive { border-color: #e8b24d; color: #e8b24d; background: rgba(232,178,77,0.12); }
+
+.promptBlock { padding: 22px; }
+.roleLabel {
+  font-size: 11.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em;
+  color: #e8b24d; margin-bottom: 10px;
+}
+.promptText { font-size: 17px; font-weight: 600; line-height: 1.5; margin-bottom: 18px; color: #ffffff; }
+
+.options { display: grid; gap: 10px; }
+.optionBtn {
+  text-align: left; font-size: 14.5px; font-weight: 500;
+  padding: 13px 16px; border-radius: 12px;
+  border: 1px solid rgba(255,255,255,0.08); background: #163d2a; color: #eef4ef;
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  cursor: pointer;
+}
+.optionBtn:hover:not(:disabled) { border-color: rgba(232,178,77,0.5); }
+.optionBtn:disabled { cursor: default; }
+.optionCorrect { border-color: #e8b24d; background: rgba(232,178,77,0.16); }
+.optionWrong { border-color: #e07a5f; background: rgba(224,122,95,0.14); }
+
+.explainBox {
+  margin-top: 16px; display: flex; gap: 8px; align-items: flex-start;
+  font-size: 14px; color: #b9c9be; line-height: 1.6;
+}
+
+.confidenceRow {
+  border-top: 1px solid rgba(255,255,255,0.08);
+  padding: 14px 22px; display: flex; align-items: center; justify-content: space-between;
+}
+.confidenceLabel { font-size: 12px; font-weight: 600; color: #b9c9be; }
+.confidenceBarWrap { display: flex; align-items: center; gap: 8px; width: 160px; }
+@media (min-width: 640px) { .confidenceBarWrap { width: 220px; } }
+.confidenceBarBg { height: 6px; flex: 1; border-radius: 999px; background: rgba(255,255,255,0.1); overflow: hidden; }
+.confidenceBarFill { height: 100%; background: #e8b24d; transition: width 0.5s ease; }
+.confidenceValue { font-size: 12.5px; font-weight: 700; color: #e8b24d; width: 36px; text-align: right; }
+
+/* ---------- light (cream) section ---------- */
+.sectionLight { background: #f5f3ef; color: #16241c; padding: 60px 0; }
+.sectionLightInner { max-width: 1040px; margin: 0 auto; padding: 0 20px; }
+.sectionDark { background: #0b2a1c; padding: 60px 0; }
+.sectionDarkInner { max-width: 1040px; margin: 0 auto; padding: 0 20px; }
+
+.sectionTitleLight { font-size: 1.7rem; font-weight: 700; max-width: 520px; margin-bottom: 12px; line-height: 1.2; }
+.sectionTitleDark { font-size: 1.7rem; font-weight: 700; max-width: 520px; margin-bottom: 12px; line-height: 1.2; color: #ffffff; }
+@media (min-width: 640px) { .sectionTitleLight, .sectionTitleDark { font-size: 2.1rem; } }
+.sectionBodyLight { color: #5c6b61; font-size: 15px; max-width: 480px; line-height: 1.65; margin-bottom: 32px; }
+.sectionBodyDark { color: #cddbd1; font-size: 15px; max-width: 480px; line-height: 1.65; margin-bottom: 32px; }
+
+/* problem cards (white, on cream) */
+.cardGrid { display: grid; gap: 16px; grid-template-columns: 1fr; }
+@media (min-width: 640px) { .cardGrid { grid-template-columns: repeat(3, 1fr); } }
+
+.whiteCard {
+  background: #ffffff; border: 1px solid #ece7de; border-radius: 16px; padding: 22px;
+}
+.iconBadgePeach {
+  width: 40px; height: 40px; border-radius: 10px; background: #fbeae0;
+  display: flex; align-items: center; justify-content: center; margin-bottom: 16px;
+}
+.whiteCardTitle { font-size: 16px; font-weight: 700; margin-bottom: 6px; color: #16241c; }
+.whiteCardBody { font-size: 14px; color: #6b7a70; line-height: 1.6; }
+
+/* feature cards (dark green, gold icon) */
+.featureGrid { display: grid; gap: 16px; grid-template-columns: 1fr; }
+@media (min-width: 640px) { .featureGrid { grid-template-columns: 1fr 1fr; } }
+@media (min-width: 1024px) { .featureGrid { grid-template-columns: repeat(4, 1fr); } }
+
+.darkCard { background: #123322; border: 1px solid rgba(255,255,255,0.06); border-radius: 16px; padding: 22px; }
+.iconBadgeGold {
+  width: 40px; height: 40px; border-radius: 10px; background: #e8b24d;
+  display: flex; align-items: center; justify-content: center; margin-bottom: 16px;
+}
+.darkCardNum { font-size: 11px; font-weight: 700; color: #e8b24d; margin-bottom: 8px; display: block; }
+.darkCardTitle { font-size: 16px; font-weight: 700; margin-bottom: 6px; color: #ffffff; }
+.darkCardBody { font-size: 14px; color: #b9c9be; line-height: 1.6; }
+
+/* dashboard */
+.dashboardHead {
+  display: flex; flex-direction: column; gap: 16px; margin-bottom: 28px;
+}
+@media (min-width: 640px) { .dashboardHead { flex-direction: row; align-items: flex-end; justify-content: space-between; } }
+.teamButtons { display: flex; gap: 8px; flex-wrap: wrap; }
+.teamBtn {
+  font-size: 12.5px; font-weight: 600;
+  padding: 7px 15px; border-radius: 999px; border: 1px solid #d8d2c6;
+  background: #ffffff; color: #5c6b61; cursor: pointer;
+}
+.teamBtnActive { border-color: #3c7a56; color: #3c7a56; background: #eaf3ee; }
+
+.dashboardGrid { display: grid; gap: 18px; grid-template-columns: 1fr; }
+@media (min-width: 1024px) { .dashboardGrid { grid-template-columns: 1.4fr 1fr; } }
+
+.chartCard { background: #ffffff; border: 1px solid #ece7de; border-radius: 16px; padding: 16px; height: 320px; }
+@media (min-width: 640px) { .chartCard { padding: 22px; } }
+
+.statCard {
+  background: #ffffff; border: 1px solid #ece7de; border-radius: 16px;
+  padding: 22px; display: flex; flex-direction: column; justify-content: space-between;
+}
+.statTeamLabel { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
+.statSmall { font-size: 11.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: #6b7a70; }
+.statBig { font-size: 2.4rem; font-weight: 700; margin-bottom: 4px; color: #16241c; }
+.statBigUnit { font-size: 1.1rem; color: #9aa79f; font-weight: 500; }
+.statDesc { font-size: 14px; color: #6b7a70; line-height: 1.6; }
+.weakBlock { margin-top: 22px; padding-top: 16px; border-top: 1px solid #ece7de; }
+.weakLabel { font-size: 12px; color: #6b7a70; margin-bottom: 6px; }
+.weakValue { font-size: 14px; font-weight: 700; color: #c9573f; }
+
+/* credential */
+.credentialGrid { display: grid; gap: 26px; grid-template-columns: 1fr; align-items: center; }
+@media (min-width: 640px) { .credentialGrid { grid-template-columns: auto 1fr; } }
+.credentialCard {
+  border-radius: 18px; background: linear-gradient(145deg, rgba(232,178,77,0.16), rgba(232,178,77,0.02));
+  border: 1px solid rgba(232,178,77,0.4);
+  padding: 26px; width: 100%; max-width: 270px;
+}
+.credentialLabel { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: #b9c9be; margin-bottom: 6px; }
+.credentialTitle { font-size: 1.35rem; font-weight: 700; margin-bottom: 14px; color: #ffffff; }
+.credentialTag { font-size: 11px; font-weight: 600; color: #e8b24d; }
+.credentialText { color: #cddbd1; font-size: 15.5px; line-height: 1.7; max-width: 440px; }
+
+/* footer */
+.footer { background: #0b2a1c; padding: 64px 20px 40px; text-align: center; }
+.footerInner { max-width: 640px; margin: 0 auto; }
+.footerIcon {
+  width: 56px; height: 56px; border-radius: 999px; background: rgba(232,178,77,0.14);
+  display: flex; align-items: center; justify-content: center; margin: 0 auto 24px;
+}
+.footerTitle { font-size: 1.9rem; font-weight: 700; color: #ffffff; line-height: 1.25; }
+.footerTitleGold { color: #e8b24d; display: block; }
+.footerSub { margin-top: 16px; color: #b9c9be; font-size: 15px; line-height: 1.6; }
+.footerDivider { margin: 40px auto 20px; height: 1px; width: 100%; background: rgba(255,255,255,0.08); }
+.footerCopy { font-size: 12.5px; color: #7f9184; }
