@@ -164,12 +164,12 @@ export default function WorkPage() {
     <div className={`${styles.page} ${fraunces.variable} ${inter.variable}`}>
       {/* NAV */}
       <header className={styles.header}>
-        <div className={styles.brand}>
+        <a href="/" className={styles.brand} style={{textDecoration:"none",color:"inherit"}}>
           <span className={`${styles.brandName} ${styles.serif}`}>
             Math<span className={styles.brandGold}>Craft</span>
           </span>
           <span className={styles.badge}>for Work</span>
-        </div>
+        </a>
         <button className={styles.btnGold}>
           Start Free <ArrowRight size={15} />
         </button>
