@@ -92,4 +92,5 @@ IBM Bob served as the **primary development tool** throughout this project:
 * **Documentation:** Bob assisted in generating and maintaining this README, including structuring sections, formatting badges, and writing setup instructions.
 * **Debugging & Troubleshooting:** Bob was used interactively to diagnose authentication issues, environment configuration, and API connectivity problems during development.
 * **Project Structure Auditing:** Bob helped verify the consistency of the project's file structure and identify missing configuration files (e.g., `.env.example`).
+* **Verified Learning & Certification:** Beyond hands-on development use, the author completed three official IBM SkillsBuild learning activities on Bob and the underlying Granite models — *IBM Granite Models for Software Development*, *Lab: Troubleshoot Your Code Using IBM Bob*, and *How IBM Bob and AI Tools Are Changing the Way Solutions Are Built* — completed July 18–19, 2026. Completion certificates are included in this repository (`IBM Completion Certification Report-2026.pdf`, `IBM Completion Certificate_SkillsBuild.pdf`) as verifiable proof of engagement with the platform.
 
