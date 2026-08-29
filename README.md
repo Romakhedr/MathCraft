@@ -20,16 +20,6 @@
 - **API Backend:** Hosted on Vercel Serverless Functions
 
 ---
-
-## 🚀 Key Features
-
-MathCraft is built on three core pillars:
-
-* 🤖 **AI-Powered Real-Time Tutor:** Explains complex mathematical concepts and step-by-step mistake solutions powered by **IBM watsonx AI**
-* 📊 **Adaptive Progress Analytics:** Dynamic dashboard that tracks student milestones, performance speed, and accuracy precision.
-* 🪙 **Web3 Tokenized Rewards:** Seamless blockchain integration rewarding student progress with native **MathCraft Tokens (MTH)**.
-
----
 🚀 Key Features
 MathCraft is built on three core pillars:
 🤖 AI-Powered Real-Time Tutor: Explains complex mathematical concepts and step-by-step mistake solutions powered by IBM watsonx AI
