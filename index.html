@@ -190,14 +190,24 @@
     .ai-panel{right:16px; left:16px; width:auto; bottom:88px;}
     .ai-fab{right:16px;}
   }
-
-  @media(max-width:860px){
-    nav.links{display:none;}
+@media(max-width:860px){
+    nav.links{
+      display:flex;
+      gap:16px;
+      overflow-x:auto;
+      max-width:55vw;
+      -ms-overflow-style:none;
+      scrollbar-width:none;
+      white-space:nowrap;
+    }
+    nav.links::-webkit-scrollbar{display:none;}
+    nav.links a{font-size:13px; flex-shrink:0;}
+    .navwrap{gap:10px;}
     .grid3, .feat-grid, .impact-grid{grid-template-columns:1fr;}
     .topics-grid{grid-template-columns:repeat(2,1fr);}
     .solver-wrap{grid-template-columns:1fr;}
     .hero-stats{gap:36px;}
-  }
+}
 </style>
   <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js" integrity="sha384-+VBxd3r6XgURycqtZ117nYw44OOcIax56Z4dCRWbxyPt0Koah1uHoK0o4+/RRE05" crossorigin="anonymous"></script>
   <script>
