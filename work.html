@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MathCraft for Work</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#0B2A1C;--gold:#F2B632;--gold-soft:#F8D27C;--paper:#F6F5EF;--muted:#B8CFC0;--muted-dark:#5B6E63;--line:#22503A;--success:#3F8F5F;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Inter',sans-serif;background:var(--paper);color:var(--ink);line-height:1.6;}
+a{color:inherit;text-decoration:none;}
+.container{max-width:900px;margin:0 auto;padding:70px 24px;}
+header{background:var(--ink);padding:18px 24px;}
+.navwrap{display:flex;align-items:center;justify-content:space-between;max-width:1100px;margin:0 auto;}
+.logo{font-size:22px;font-weight:800;color:#fff;}
+.logo span{color:var(--gold);}
+.back{color:var(--gold-soft);font-size:14px;font-weight:600;}
+.eyebrow{color:var(--success);font-size:13px;font-weight:700;letter-spacing:2.5px;margin-bottom:16px;}
+h1{font-family:'Playfair Display',serif;font-size:clamp(30px,5vw,46px);margin-bottom:20px;line-height:1.3;}
+h1 em{color:var(--gold);font-style:italic;}
+p.lead{font-size:17px;color:var(--muted-dark);max-width:600px;margin-bottom:34px;line-height:1.8;}
+.btn-gold{background:var(--gold);color:var(--ink);font-weight:700;padding:12px 26px;border-radius:10px;display:inline-block;transition:transform .15s ease;}
+.btn-gold:hover{transform:translateY(-2px);}
+.card{background:#fff;border:1px solid #E6E3D8;border-radius:16px;padding:24px;margin-top:20px;}
+.card h3{font-size:17px;font-weight:700;margin-bottom:8px;}
+.card p{color:var(--muted-dark);font-size:14.5px;}
+</style>
+</head>
+<body>
+<header>
+  <div class="navwrap">
+    <div class="logo">Math<span>Craft</span></div>
+    <a href="/" class="back">← Back Home</a>
+  </div>
+</header>
+<div class="container">
+  <span class="eyebrow">— FUTURE OF WORK —</span>
+  <h1>Every job runs on <em>judgment calls.</em></h1>
+  <p class="lead">MathCraft for Work turns adaptive, gamified learning into a layer that sits next to the decision itself — a price, a forecast, a dashboard — instead of a course taken long before it's needed.</p>
+  <a href="/#quiz" class="btn-gold">Try the Diagnostic →</a>
+  <div class="card">
+    <h3>Diagnose the gap</h3>
+    <p>A short adaptive check-in tied to a person's role finds the quantitative gap actually costing them time.</p>
+  </div>
+  <div class="card">
+    <h3>Practice the real thing</h3>
+    <p>Micro-challenges built from workplace scenarios — pricing, forecasting, dashboards — not textbook problems.</p>
+  </div>
+  <div class="card">
+    <h3>Coordinate as a team</h3>
+    <p>Managers see where a team's quantitative confidence is thin, so support arrives before a decision goes wrong.</p>
+  </div>
+</div>
+</body>
+</html>
