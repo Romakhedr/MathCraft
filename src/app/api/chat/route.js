@@ -12,6 +12,8 @@ export async function POST(request) {
     // جلب المفتاح والرابط من متغيرات البيئة المحدثة في Vercel
     const apiKey = process.env.IBMBOBAPIKEY;
     const baseUrl = process.env.IBMAPIURL;
+     const apiKey = process.env.mathcraftv2; 
+    const baseUrl = process.env.mathcraftbackend;
 
     if (!apiKey || !baseUrl) {
       return NextResponse.json({ 
