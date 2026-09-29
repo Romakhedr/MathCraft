@@ -16,9 +16,9 @@
 ---
 ## 🎬 Demo
 
-▶️ Watch the 4-minute presentation:  <a href=https://www.youtube.com/watch?v=QCfhRInOpeA
+▶️ **[Watch the 4-minute presentation on YouTube](https://www.youtube.com/watch?v=QCfhRInOpeA)**
 
-🔗 Live demo: https://math-craft-gray.vercel.app
+https://math-craft-gray.vercel.app
 
 ## 🌐 Live Demo & Deployment
 - **Frontend App:** [https://romakhedr.github.io/MathCraft/](https://romakhedr.github.io/MathCraft/)
