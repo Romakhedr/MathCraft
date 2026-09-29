@@ -1,6 +1,6 @@
 <div align="center">
  
-<img src="logo.png" alt="MathCraft 
+<img src="logo-1.png" alt="MathCraft 
  Logo" width="180"/>
 
 # MathCraft
